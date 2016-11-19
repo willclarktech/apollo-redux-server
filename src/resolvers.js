@@ -1,22 +1,8 @@
 import { filter, find } from 'lodash'
 import makeStore from './store'
+import getMutationResponse from './responder'
 
 const store = makeStore()
-
-const getMutationResponse = action => {
-  switch (action.type) {
-    case 'UPVOTE_POST': {
-      const { posts } = store.getState()
-      return find(posts, { id: action.postId })
-    }
-    case 'CREATE_POST': {
-      const { posts } = store.getState()
-      return posts[posts.length - 1]
-    }
-    default:
-      return null
-  }
-}
 
 export default {
   Query: {
@@ -40,7 +26,7 @@ export default {
   Mutation: {
     dispatch(_, { action }) {
       store.dispatch(action)
-      return getMutationResponse(action)
+      return getMutationResponse(store.getState())(action)
     },
   },
 }

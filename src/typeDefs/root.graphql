@@ -1,0 +1,14 @@
+type Query {
+  posts: [Post]
+}
+
+type Mutation {
+  dispatch(
+    action: Action!
+  ): Post
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

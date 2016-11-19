@@ -1,7 +1,9 @@
 import { filter, find } from 'lodash'
 import makeStore from './store'
+import Logger from './logger'
 import getMutationResponse from './responder'
 
+const logger = new Logger()
 const store = makeStore()
 
 export default {
@@ -25,6 +27,7 @@ export default {
   },
   Mutation: {
     dispatch(_, { action }) {
+      logger.logAction(action)
       store.dispatch(action)
       return getMutationResponse(store.getState())(action)
     },

@@ -1,4 +1,6 @@
 input Action {
   type: String!
   postId: Int
+  authorId: Int
+  title: String
 }

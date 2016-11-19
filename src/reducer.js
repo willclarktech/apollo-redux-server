@@ -19,10 +19,23 @@ const upvotePost = state => id => {
   return state
 }
 
+const createPost = state => action => {
+  const { authorId, title } = action
+  state.posts.push({
+    id: state.posts.length + 1,
+    authorId,
+    title,
+    votes: 0,
+  })
+  return state
+}
+
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'UPVOTE_POST':
       return upvotePost(state)(action.postId)
+    case 'CREATE_POST':
+      return createPost(state)(action)
     default:
       return state
   }

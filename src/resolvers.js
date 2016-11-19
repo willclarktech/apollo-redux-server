@@ -3,6 +3,21 @@ import makeStore from './store'
 
 const store = makeStore()
 
+const getMutationResponse = action => {
+  switch (action.type) {
+    case 'UPVOTE_POST': {
+      const { posts } = store.getState()
+      return find(posts, { id: action.postId })
+    }
+    case 'CREATE_POST': {
+      const { posts } = store.getState()
+      return posts[posts.length - 1]
+    }
+    default:
+      return null
+  }
+}
+
 export default {
   Query: {
     posts() {
@@ -25,11 +40,7 @@ export default {
   Mutation: {
     dispatch(_, { action }) {
       store.dispatch(action)
-
-      const { posts } = store.getState()
-      const post = find(posts, { id: action.postId })
-
-      return post
+      return getMutationResponse(action)
     },
   },
 }

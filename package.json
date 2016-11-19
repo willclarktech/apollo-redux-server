@@ -1,0 +1,38 @@
+{
+  "name": "apollo-redux-server",
+  "version": "1.0.0",
+  "description": "Combining apollo-server with redux on the backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js --watch src --exec babel-node",
+    "lint": "eslint src",
+    "lint:fix": "npm run lint --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "willclarktech",
+  "license": "ISC",
+  "dependencies": {
+    "graphql": "^0.8.2",
+    "graphql-server-koa": "^0.4.3",
+    "graphql-tools": "^0.8.1",
+    "koa": "^2.0.0-alpha.7",
+    "koa-bodyparser": "^3.2.0",
+    "koa-router": "^7.0.1",
+    "lodash": "^4.17.2",
+    "nodemon": "^1.11.0",
+    "redux": "^3.6.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.1",
+    "babel-preset-esnext": "^1.0.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-register": "^6.18.0",
+    "eslint": "^3.10.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-babel": "^4.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.7.1"
+  }
+}

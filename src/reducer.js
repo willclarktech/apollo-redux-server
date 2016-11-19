@@ -12,7 +12,8 @@ const INITIAL_STATE = {
   ],
 }
 
-const upvotePost = state => id => {
+const upvotePost = state => action => {
+  const { postId: id } = action
   const post = find(state.posts, { id })
   if (!post) throw new Error(`Couldn’t find post with id ${id}`)
   post.votes += 1
@@ -30,13 +31,14 @@ const createPost = state => action => {
   return state
 }
 
+const reducers = {
+  UPVOTE_POST: upvotePost,
+  CREATE_POST: createPost,
+}
+
 export default (state = INITIAL_STATE, action) => {
-  switch (action.type) {
-    case 'UPVOTE_POST':
-      return upvotePost(state)(action.postId)
-    case 'CREATE_POST':
-      return createPost(state)(action)
-    default:
-      return state
-  }
+  const reducer = reducers[action.type]
+  return reducer
+    ? reducer(state)(action)
+    : state
 }

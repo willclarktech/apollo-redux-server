@@ -21,7 +21,7 @@ const ACTIONS =
     .map(JSON.parse)
 
 const initialisedState =
-  ACTIONS.reduce(createReducer(INITIAL_STATE), INITIAL_STATE)
+  ACTIONS.reduce(createReducer(), INITIAL_STATE)
 
 const reducer = createReducer(initialisedState)
 

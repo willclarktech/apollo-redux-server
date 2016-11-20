@@ -1,17 +1,5 @@
 import { find } from 'lodash'
 
-const INITIAL_STATE = {
-  authors: [
-    { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-    { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  ],
-  posts: [
-    { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-    { id: 2, authorId: 2, title: 'GraphQL Rocks', votes: 3 },
-    { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  ],
-}
-
 const upvotePost = state => action => {
   const { postId: id } = action
   const post = find(state.posts, { id })
@@ -36,7 +24,10 @@ const reducers = {
   CREATE_POST: createPost,
 }
 
-export default (state = INITIAL_STATE, action) => {
+export default initialState => (
+  state = initialState,
+  action,
+) => {
   const reducer = reducers[action.type]
   return reducer
     ? reducer(state)(action)

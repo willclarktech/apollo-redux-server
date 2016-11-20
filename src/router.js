@@ -1,3 +1,4 @@
+// @flow
 import Router from 'koa-router'
 import { graphqlKoa, graphiqlKoa } from 'graphql-server-koa'
 import schema from './schema'

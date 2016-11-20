@@ -1,19 +1,26 @@
+// @flow
 import { find } from 'lodash'
 
-const getUpvotePostResponse = ({ posts }) => action =>
+import type {
+  Action,
+  AppState,
+  Post,
+  UpvotePostAction,
+} from './types/flow'
+
+const getUpvotePostResponse = ({ posts }: AppState) => (action: UpvotePostAction): Post =>
   find(posts, { id: action.postId })
 
-const getCreatePostResponse = ({ posts }) => () =>
+const getCreatePostResponse = ({ posts }: AppState) => (): Post =>
   posts[posts.length - 1]
 
-const responders = {
-  UPVOTE_POST: getUpvotePostResponse,
-  CREATE_POST: getCreatePostResponse,
-}
-
-export default state => action => {
-  const responder = responders[action.type]
-  return responder
-    ? responder(state)(action)
-    : null
+export default (state: AppState) => (action: Action): any => {
+  switch (action.type) {
+    case 'UPVOTE_POST':
+      return getUpvotePostResponse(state)(action)
+    case 'CREATE_POST':
+      return getCreatePostResponse(state)(action)
+    default:
+      return null
+  }
 }

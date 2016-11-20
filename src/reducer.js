@@ -1,6 +1,14 @@
+// @flow
 import { find } from 'lodash'
 
-const upvotePost = state => action => {
+import type {
+  Action,
+  AppState,
+  CreatePostAction,
+  UpvotePostAction,
+} from './types/flow'
+
+const upvotePost = (state: AppState) => (action: UpvotePostAction): AppState => {
   const { postId: id } = action
   const post = find(state.posts, { id })
   if (!post) throw new Error(`Couldn’t find post with id ${id}`)
@@ -8,7 +16,7 @@ const upvotePost = state => action => {
   return state
 }
 
-const createPost = state => action => {
+const createPost = (state: AppState) => (action: CreatePostAction): AppState => {
   const { authorId, title } = action
   state.posts.push({
     id: state.posts.length + 1,
@@ -19,17 +27,19 @@ const createPost = state => action => {
   return state
 }
 
-const reducers = {
-  UPVOTE_POST: upvotePost,
-  CREATE_POST: createPost,
-}
-
-export default initialState => (
-  state = initialState,
-  action,
-) => {
-  const reducer = reducers[action.type]
-  return reducer
-    ? reducer(state)(action)
-    : state
+export default (initialState: ?AppState) => (
+  state: ?AppState = initialState,
+  action: Action,
+): AppState => {
+  if (!state) {
+    throw new Error('No initial state provided')
+  }
+  switch (action.type) {
+    case 'UPVOTE_POST':
+      return upvotePost(state)(action)
+    case 'CREATE_POST':
+      return createPost(state)(action)
+    default:
+      return state
+  }
 }

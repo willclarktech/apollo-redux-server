@@ -1,8 +1,16 @@
+// @flow
 import fs from 'fs'
 import { createStore } from 'redux'
 import createReducer from './reducer'
 
-const INITIAL_STATE = {
+import type {
+  Action,
+  AppState,
+  Reducer,
+  ReduxStore,
+} from './types/flow'
+
+const INITIAL_STATE: AppState = {
   authors: [
     { id: 1, firstName: 'Tom', lastName: 'Coleman' },
     { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
@@ -14,15 +22,15 @@ const INITIAL_STATE = {
   ],
 }
 
-const ACTIONS =
+const ACTIONS: Array<Action> =
   fs.readFileSync('actions.log', 'utf-8')
     .split('\n')
     .filter(action => !!action)
-    .map(JSON.parse)
+    .map(action => JSON.parse(action))
 
-const initialisedState =
+const initialisedState: AppState =
   ACTIONS.reduce(createReducer(), INITIAL_STATE)
 
-const reducer = createReducer(initialisedState)
+const reducer: Reducer = createReducer(initialisedState)
 
-export default () => createStore(reducer)
+export default (): ReduxStore => createStore(reducer)

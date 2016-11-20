@@ -1,3 +1,4 @@
+// @flow
 import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
 import CONFIG from './server.config'

@@ -1,3 +1,4 @@
+// @flow
 import fs from 'fs'
 
 export default ['action.input', 'post', 'author', 'root']

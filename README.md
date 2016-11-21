@@ -90,7 +90,7 @@ const ACTIONS =
   fs.readFileSync('actions.log', 'utf-8')
     .split('\n')
     .filter(action => !!action)
-    .map(JSON.parse)
+    .map(action => JSON.parse(action))
 
 const initialisedState =
   ACTIONS.reduce(createReducer(), INITIAL_STATE)
@@ -108,3 +108,7 @@ Benefits include:
 - ...
 
 In this proof-of-concept app, the logs are just stored in a text file, but you could just as well use a table in a SQL database, Elasticsearch (to see pretty graphs in Kibana), or a blockchain (e.g. use Bitcoin’s).
+
+## What’s up with all these higher-order functions?
+
+I don’t know, it’s just something I’m trying out. It’s inspired by Elm, where all functions are curried.

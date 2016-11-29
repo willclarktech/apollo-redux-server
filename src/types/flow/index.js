@@ -8,6 +8,7 @@ export type {
 export type {
   Author,
   Post,
+  Secret,
 } from './domain.types'
 
 export type {

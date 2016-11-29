@@ -20,6 +20,10 @@ const INITIAL_STATE: AppState = {
     { id: 2, authorId: 2, title: 'GraphQL Rocks', votes: 3 },
     { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
   ],
+  secrets: [
+    { id: 1, userId: 11036220, content: 'This is a secret!' },
+    { id: 2, userId: 11036221, content: 'This is someone else’s secret' },
+  ],
 }
 
 const ACTIONS: Array<Action> =

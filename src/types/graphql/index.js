@@ -1,5 +1,13 @@
 // @flow
 import fs from 'fs'
 
-export default ['action.input', 'post', 'author', 'root']
+const SCHEMAS = [
+  'action.input',
+  'post',
+  'author',
+  'secret',
+  'root',
+]
+
+export default SCHEMAS
   .map(schema => fs.readFileSync(`${__dirname}/${schema}.graphql`, 'utf-8'))

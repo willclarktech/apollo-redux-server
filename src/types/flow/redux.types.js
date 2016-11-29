@@ -2,11 +2,13 @@
 import type {
   Author,
   Post,
+  Secret,
 } from './domain.types'
 
 export type AppState = {
   authors: Array<Author>,
   posts: Array<Post>,
+  secrets: Array<Secret>,
 }
 
 export type UpvotePostAction = {

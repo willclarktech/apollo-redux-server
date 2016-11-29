@@ -11,3 +11,9 @@ export type Post = {
   title: string,
   votes: number,
 }
+
+export type Secret = {
+  id: number,
+  userId: number,
+  content: string,
+}

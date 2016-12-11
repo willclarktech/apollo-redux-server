@@ -9,7 +9,9 @@ passport.use(new Strategy({
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   callbackURL: `http://${HOST}:${PORT}/auth/github/callback`,
 }, (token, tokenSecret, profile, done) => {
-  console.log(token, tokenSecret, profile)
-  // retrieve user ...
-  done()
+  console.info(`Got user ${profile.id}`)
+  done(null, parseInt(profile.id, 10))
 }))
+
+passport.serializeUser((userId, done) => done(null, userId))
+passport.deserializeUser((userId, done) => done(null, userId))

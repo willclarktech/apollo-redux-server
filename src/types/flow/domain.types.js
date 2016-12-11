@@ -1,8 +1,7 @@
 // @flow
 export type Author = {
   id: number,
-  firstName: string,
-  lastName: string,
+  name: string,
 }
 
 export type Post = {

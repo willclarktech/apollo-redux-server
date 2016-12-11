@@ -4,6 +4,7 @@ import { find } from 'lodash'
 import type {
   Action,
   AppState,
+  CreateAuthorAction,
   CreatePostAction,
   UpvotePostAction,
 } from './types/flow'
@@ -27,6 +28,12 @@ const createPost = (state: AppState) => (action: CreatePostAction): AppState => 
   return state
 }
 
+const createAuthor = (state: AppState) => (action: CreateAuthorAction): AppState => {
+  const { id, name } = action
+  state.authors.push({ id, name })
+  return state
+}
+
 export default (initialState: ?AppState) => (
   state: ?AppState = initialState,
   action: Action,
@@ -39,6 +46,8 @@ export default (initialState: ?AppState) => (
       return upvotePost(state)(action)
     case 'CREATE_POST':
       return createPost(state)(action)
+    case 'CREATE_AUTHOR':
+      return createAuthor(state)(action)
     default:
       return state
   }

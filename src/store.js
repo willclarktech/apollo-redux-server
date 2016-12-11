@@ -12,9 +12,8 @@ import type {
 
 const INITIAL_STATE: AppState = {
   authors: [
-    { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-    { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-    { id: 11036220, firstName: 'Will', lastName: 'Clark' },
+    { id: 1, name: 'Tom Coleman' },
+    { id: 2, name: 'Sashko Stubailo' },
   ],
   posts: [
     { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
@@ -38,4 +37,6 @@ const initialisedState: AppState =
 
 const reducer: Reducer = createReducer(initialisedState)
 
-export default (): ReduxStore => createStore(reducer)
+const store: ReduxStore = createStore(reducer)
+
+export default store

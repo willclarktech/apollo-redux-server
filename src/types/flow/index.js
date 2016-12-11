@@ -14,6 +14,7 @@ export type {
 export type {
   Action,
   AppState,
+  CreateAuthorAction,
   CreatePostAction,
   Reducer,
   ReduxStore,

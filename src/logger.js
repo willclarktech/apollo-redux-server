@@ -4,7 +4,7 @@ import type {
   Action,
 } from './types/flow'
 
-export default class Logger {
+class Logger {
   stream: stream$Writable
   constructor(fileName: string = 'actions.log'): void {
     this.stream =
@@ -16,3 +16,7 @@ export default class Logger {
       .write(`${JSON.stringify(action)}\n`)
   }
 }
+
+const logger = new Logger()
+
+export default logger

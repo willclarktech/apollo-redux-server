@@ -22,9 +22,22 @@ export type CreatePostAction = {
   title: string,
 }
 
-export type Action
+export type CreateAuthorAction = {
+  type: 'CREATE_AUTHOR',
+  id: number,
+  name: string,
+}
+
+type PublicAction
   = UpvotePostAction
   | CreatePostAction
+
+type PrivateAction
+  = CreateAuthorAction
+
+export type Action
+  = PublicAction
+  | PrivateAction
 
 export type Reducer = (state: AppState, action: Action) => AppState
 

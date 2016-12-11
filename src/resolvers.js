@@ -1,10 +1,10 @@
 // @flow
 import type { Context } from 'koa'
 import { filter, find } from 'lodash'
-import makeStore from './store'
+import store from './store'
 import validate from './validator'
 import authenticate from './authenticator'
-import Logger from './logger'
+import logger from './logger'
 import getMutationResponse from './responder'
 
 import type {
@@ -14,11 +14,7 @@ import type {
   Author,
   Post,
   Secret,
-  ReduxStore,
 } from './types/flow'
-
-const logger = new Logger()
-const store: ReduxStore = makeStore()
 
 export default {
   Query: {

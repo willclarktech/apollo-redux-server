@@ -14,16 +14,18 @@ const assertAuthorIsUser = (authorId: number) => (ctx: Context) => ctx.assert(
   'You cannot create posts for this author',
 )
 
-const authenticate = (ctx: Context) => (action: Action): void => {
+const authenticate = (ctx: Context) => {
   assertIsAuthenticated(ctx)
-  switch (action.type) {
-    case 'UPVOTE_POST':
-      break
-    case 'CREATE_POST':
-      assertAuthorIsUser(action.authorId)(ctx)
-      break
-    default:
-      break
+  return (action: Action): void => {
+    switch (action.type) {
+      case 'UPVOTE_POST':
+        break
+      case 'CREATE_POST':
+        assertAuthorIsUser(action.authorId)(ctx)
+        break
+      default:
+        break
+    }
   }
 }
 

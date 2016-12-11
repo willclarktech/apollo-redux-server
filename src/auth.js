@@ -3,14 +3,19 @@ import { Strategy } from 'passport-github'
 import CONFIG from './server.config'
 
 const {
+  GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET,
+} = process.env
+
+const {
   HOST,
   PORT,
   PATHS: { GITHUB_CALLBACK },
 } = CONFIG
 
 passport.use(new Strategy({
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  clientID: GITHUB_CLIENT_ID,
+  clientSecret: GITHUB_CLIENT_SECRET,
   callbackURL: `http://${HOST}:${PORT}${GITHUB_CALLBACK}`,
 }, (token, tokenSecret, profile, done) => {
   console.info(`Got user ${profile.id}`)

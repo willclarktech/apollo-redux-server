@@ -9,7 +9,7 @@ const {
 } = CONFIG
 
 passport.use(new Strategy({
-  clientID: '90294f603aa7ffc17167',
+  clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   callbackURL: `http://${HOST}:${PORT}${GITHUB_CALLBACK}`,
 }, (token, tokenSecret, profile, done) => {

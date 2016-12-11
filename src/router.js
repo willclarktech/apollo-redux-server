@@ -3,8 +3,16 @@ import Router from 'koa-router'
 import passport from 'koa-passport'
 import { graphqlKoa, graphiqlKoa } from 'graphql-server-koa'
 import schema from './schema'
+import CONFIG from './server.config'
 
 require('./auth')
+
+const {
+  GRAPHQL: GRAPHQL_PATH,
+  GITHUB: GITHUB_PATH,
+  GITHUB_CALLBACK: GITHUB_CALLBACK_PATH,
+  LOGOUT: LOGOUT_PATH,
+} = CONFIG.PATHS
 
 const GRAPHQL_OPTIONS = context => ({
   context,
@@ -13,24 +21,24 @@ const GRAPHQL_OPTIONS = context => ({
 })
 
 const GRAPHIQL_OPTIONS = {
-  endpointURL: '/graphql',
+  endpointURL: GRAPHQL_PATH,
 }
 
 const AUTH_OPTIONS = {
-  successRedirect: '/graphql',
-  failureRedirect: '/graphql',
+  successRedirect: GRAPHQL_PATH,
+  failureRedirect: GRAPHQL_PATH,
 }
 
 const router = new Router()
 
-router.post('/graphql', graphqlKoa(GRAPHQL_OPTIONS))
-router.get('/graphql', graphiqlKoa(GRAPHIQL_OPTIONS))
+router.post(GRAPHQL_PATH, graphqlKoa(GRAPHQL_OPTIONS))
+router.get(GRAPHQL_PATH, graphiqlKoa(GRAPHIQL_OPTIONS))
 
-router.get('/auth/github', passport.authenticate('github'))
-router.get('/auth/github/callback', passport.authenticate('github', AUTH_OPTIONS))
-router.get('/logout', ctx => {
+router.get(GITHUB_PATH, passport.authenticate('github'))
+router.get(GITHUB_CALLBACK_PATH, passport.authenticate('github', AUTH_OPTIONS))
+router.get(LOGOUT_PATH, ctx => {
   ctx.logout()
-  ctx.redirect('/graphql')
+  ctx.redirect(GRAPHQL_PATH)
 })
 
 export default router

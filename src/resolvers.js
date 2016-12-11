@@ -2,6 +2,7 @@
 import type { Context } from 'koa'
 import { filter, find } from 'lodash'
 import makeStore from './store'
+import validate from './validator'
 import authenticate from './authenticator'
 import Logger from './logger'
 import getMutationResponse from './responder'
@@ -46,6 +47,7 @@ export default {
   },
   Mutation: {
     dispatch(_: any, { action }: MutationParams, ctx: Context): any {
+      validate(ctx)(action)
       authenticate(ctx)(action)
       logger.logAction(action)
       store.dispatch(action)

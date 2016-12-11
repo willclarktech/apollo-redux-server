@@ -1,4 +1,5 @@
 // @flow
+import type { Context } from 'koa'
 import Router from 'koa-router'
 import passport from 'koa-passport'
 import { graphqlKoa, graphiqlKoa } from 'graphql-server-koa'
@@ -14,7 +15,7 @@ const {
   LOGOUT: LOGOUT_PATH,
 } = CONFIG.PATHS
 
-const GRAPHQL_OPTIONS = context => ({
+const GRAPHQL_OPTIONS = (context: Context) => ({
   context,
   schema,
   debug: true,

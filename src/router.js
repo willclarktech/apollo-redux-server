@@ -6,10 +6,11 @@ import schema from './schema'
 
 require('./auth')
 
-const GRAPHQL_OPTIONS = {
+const GRAPHQL_OPTIONS = context => ({
+  context,
   schema,
   debug: true,
-}
+})
 
 const GRAPHIQL_OPTIONS = {
   endpointURL: '/graphql',
@@ -21,6 +22,7 @@ const AUTH_OPTIONS = {
 }
 
 const router = new Router()
+
 router.post('/graphql', graphqlKoa(GRAPHQL_OPTIONS))
 router.get('/graphql', graphiqlKoa(GRAPHIQL_OPTIONS))
 

@@ -1,6 +1,8 @@
 // @flow
+import type { Context } from 'koa'
 import { filter, find } from 'lodash'
 import makeStore from './store'
+import authenticate from './authenticator'
 import Logger from './logger'
 import getMutationResponse from './responder'
 
@@ -10,6 +12,7 @@ import type {
   PostQueryParams,
   Author,
   Post,
+  Secret,
   ReduxStore,
 } from './types/flow'
 
@@ -21,6 +24,12 @@ export default {
     posts(): Array<Post> {
       const { posts } = store.getState()
       return posts
+    },
+    secrets(_: any, __: any, ctx: Context): Array<Secret> {
+      authenticate(ctx)
+      const { user } = ctx.state
+      const { secrets } = store.getState()
+      return secrets.filter(({ userId }) => userId === parseInt(user, 10))
     },
   },
   Post: {
@@ -36,7 +45,8 @@ export default {
     },
   },
   Mutation: {
-    dispatch(_: any, { action }: MutationParams): any {
+    dispatch(_: any, { action }: MutationParams, ctx: Context): any {
+      authenticate(ctx)(action)
       logger.logAction(action)
       store.dispatch(action)
       return getMutationResponse(store.getState())(action)

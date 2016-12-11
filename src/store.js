@@ -14,6 +14,7 @@ const INITIAL_STATE: AppState = {
   authors: [
     { id: 1, firstName: 'Tom', lastName: 'Coleman' },
     { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
+    { id: 11036220, firstName: 'Will', lastName: 'Clark' },
   ],
   posts: [
     { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },

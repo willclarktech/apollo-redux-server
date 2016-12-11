@@ -5,11 +5,11 @@ import type {
   Secret,
 } from './domain.types'
 
-export type AppState = {
+export type AppState = {|
   authors: Array<Author>,
   posts: Array<Post>,
   secrets: Array<Secret>,
-}
+|}
 
 export type UpvotePostAction = {
   type: 'UPVOTE_POST',

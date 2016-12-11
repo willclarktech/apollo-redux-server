@@ -12,6 +12,7 @@
   "author": "willclarktech",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^2.0.0",
     "graphql": "^0.8.2",
     "graphql-server-koa": "^0.4.3",
     "graphql-tools": "^0.8.1",

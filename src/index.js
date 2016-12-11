@@ -1,4 +1,5 @@
 // @flow
+import dotenv from 'dotenv'
 import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
 import convert from 'koa-convert'
@@ -6,6 +7,8 @@ import session from 'koa-generic-session'
 import passport from 'koa-passport'
 import CONFIG from './server.config'
 import router from './router'
+
+dotenv.config()
 
 const { HOST, PORT } = CONFIG
 

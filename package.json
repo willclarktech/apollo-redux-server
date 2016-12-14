@@ -16,6 +16,7 @@
     "graphql": "^0.8.2",
     "graphql-server-koa": "^0.4.3",
     "graphql-tools": "^0.8.1",
+    "immutable": "^3.8.1",
     "koa": "^2.0.0-alpha.7",
     "koa-bodyparser": "^3.2.0",
     "koa-convert": "^1.2.0",

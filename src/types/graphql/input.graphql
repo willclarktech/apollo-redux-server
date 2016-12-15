@@ -2,11 +2,11 @@ input ActionInput {
   type: ActionType!
 
   # CREATE_POST
-  authorId: Int
+  author: ID
   title: String
 
   # UPVOTE_POST
-  postId: Int
+  post: ID
 }
 
 enum ActionType {

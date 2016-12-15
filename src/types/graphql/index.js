@@ -2,10 +2,8 @@
 import fs from 'fs'
 
 const SCHEMAS = [
-  'action.input',
-  'post',
-  'author',
-  'secret',
+  'domain',
+  'input',
   'root',
 ]
 

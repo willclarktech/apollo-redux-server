@@ -1,0 +1,18 @@
+ type Author {
+  id: ID!
+  name: String
+  posts: [Post]
+}
+
+type Post {
+  id: ID!
+  title: String
+  author: Author
+  votes: Int
+}
+
+ type Secret {
+  id: ID!
+  author: Author!
+  content: String!
+}

@@ -1,16 +1,15 @@
 // @flow
-import type {
-  Action,
-} from './redux.types'
+import type { ID } from './helper.types'
+import type { Action } from './redux.types'
 
 export type MutationParams = {
   action: Action,
 }
 
 export type PostQueryParams = {
-  authorId: number,
+  author: ID,
 }
 
 export type AuthorQueryParams = {
-  id: number,
+  author: ID,
 }

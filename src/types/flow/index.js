@@ -12,11 +12,17 @@ export type {
 } from './domain.types'
 
 export type {
+  ID,
+} from './helper.types'
+
+export type {
   Action,
   AppState,
-  CreateAuthorAction,
-  CreatePostAction,
+  CreateAuthorPrivateAction,
+  CreatePostPrivateAction,
+  CreatePostPublicAction,
   Reducer,
   ReduxStore,
-  UpvotePostAction,
+  UpvotePostPrivateAction,
+  UpvotePostPublicAction,
 } from './redux.types'

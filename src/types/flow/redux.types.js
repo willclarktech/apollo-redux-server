@@ -4,36 +4,48 @@ import type {
   Post,
   Secret,
 } from './domain.types'
+import type { ID } from './helper.types'
 
 export type AppState = {|
-  authors: Array<Author>,
-  posts: Array<Post>,
-  secrets: Array<Secret>,
+  authors: Map<ID, Author>,
+  posts: Map<ID, Post>,
+  secrets: Map<ID, Secret>,
 |}
 
-export type UpvotePostAction = {
+export type UpvotePostPublicAction = {
   type: 'UPVOTE_POST',
-  postId: number,
+  post: ID,
 }
 
-export type CreatePostAction = {
+export type CreatePostPublicAction = {
   type: 'CREATE_POST',
-  authorId: number,
+  author: ID,
   title: string,
 }
 
-export type CreateAuthorAction = {
+export type UpvotePostPrivateAction
+  = UpvotePostPublicAction
+
+export type CreatePostPrivateAction
+  = CreatePostPublicAction
+  & {
+    post: ID,
+  }
+
+export type CreateAuthorPrivateAction = {
   type: 'CREATE_AUTHOR',
-  id: number,
+  author: ID,
   name: string,
 }
 
-type PublicAction
-  = UpvotePostAction
-  | CreatePostAction
+export type PublicAction
+  = UpvotePostPublicAction
+  | CreatePostPublicAction
 
-type PrivateAction
-  = CreateAuthorAction
+export type PrivateAction
+  = UpvotePostPrivateAction
+  | CreatePostPrivateAction
+  | CreateAuthorPrivateAction
 
 export type Action
   = PublicAction

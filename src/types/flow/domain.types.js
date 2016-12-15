@@ -1,18 +1,20 @@
 // @flow
+import type { ID } from './helper.types'
+
 export type Author = {
-  id: number,
+  id: ID,
   name: string,
 }
 
 export type Post = {
-  id: number,
-  authorId: number,
+  id: ID,
+  author: ID,
   title: string,
   votes: number,
 }
 
 export type Secret = {
-  id: number,
-  userId: number,
+  id: ID,
+  author: ID,
   content: string,
 }

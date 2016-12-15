@@ -1,4 +1,7 @@
 /node_modules/
-actions.log
+npm-debug.log
+
 .env
+actions.log
+
 TODO.md

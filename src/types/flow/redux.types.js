@@ -14,12 +14,12 @@ export type AppState = {|
 
 export type UpvotePostPublicAction = {
   type: 'UPVOTE_POST',
-  post: ID,
+  postId: ID,
 }
 
 export type CreatePostPublicAction = {
   type: 'CREATE_POST',
-  author: ID,
+  authorId: ID,
   title: string,
 }
 
@@ -29,12 +29,12 @@ export type UpvotePostPrivateAction
 export type CreatePostPrivateAction
   = CreatePostPublicAction
   & {
-    post: ID,
+    postId: ID,
   }
 
 export type CreateAuthorPrivateAction = {
   type: 'CREATE_AUTHOR',
-  author: ID,
+  authorId: ID,
   name: string,
 }
 

@@ -31,7 +31,7 @@ passport.use(new Strategy({
   if (!author) {
     const action: CreateAuthorPrivateAction = {
       type: 'CREATE_AUTHOR',
-      author: profileId,
+      authorId: profileId,
       name: profile.displayName,
     }
     logger.logAction(action)

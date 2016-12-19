@@ -21,7 +21,7 @@ const authenticate = (ctx: Context) => {
       case 'UPVOTE_POST':
         break
       case 'CREATE_POST':
-        assertAuthorIsUser(action.author)(ctx)
+        assertAuthorIsUser(action.authorId)(ctx)
         break
       default:
         break

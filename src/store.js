@@ -19,14 +19,14 @@ const INITIAL_AUTHORS: Array<Author> = [
 ]
 
 const INITIAL_POSTS: Array<Post> = [
-  { author: '1', title: 'Introduction to GraphQL', votes: 2 },
-  { author: '2', title: 'GraphQL Rocks', votes: 3 },
-  { author: '2', title: 'Advanced GraphQL', votes: 1 },
+  { authorId: '1', title: 'Introduction to GraphQL', votes: 2 },
+  { authorId: '2', title: 'GraphQL Rocks', votes: 3 },
+  { authorId: '2', title: 'Advanced GraphQL', votes: 1 },
 ]
 
 const INITIAL_SECRETS: Array<Secret> = [
-  { author: '11036220', content: 'This is a secret!' },
-  { author: '11036221', content: 'This is someone else’s secret' },
+  { authorId: '11036220', content: 'This is a secret!' },
+  { authorId: '11036221', content: 'This is someone else’s secret' },
 ]
 
 const INITIAL_STATE: AppState = {

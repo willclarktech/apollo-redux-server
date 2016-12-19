@@ -11,19 +11,19 @@ import type {
 
 const upvotePost = (state: AppState) => (action: UpvotePostPublicAction): AppState => {
   const { posts } = state
-  const { post: id } = action
-  const post = posts.get(id)
-  if (!post) throw new Error(`Couldn’t find post with id ${id}`)
+  const { postId } = action
+  const post = posts.get(postId)
+  if (!post) throw new Error(`Couldn’t find post with id ${postId}`)
   post.votes += 1
   return state
 }
 
 const createPost = (state: AppState) => (action: CreatePostPublicAction): AppState => {
   const { posts } = state
-  const { author, title } = action
+  const { authorId, title } = action
   const id = `${posts.size + 1}`
   posts.set(id, {
-    author,
+    authorId,
     title,
     votes: 0,
   })
@@ -32,8 +32,8 @@ const createPost = (state: AppState) => (action: CreatePostPublicAction): AppSta
 
 const createAuthor = (state: AppState) => (action: CreateAuthorPrivateAction): AppState => {
   const { authors } = state
-  const { author, name } = action
-  const id = author ? author : `${authors.size + 1}`
+  const { authorId, name } = action
+  const id = authorId ? authorId : `${authors.size + 1}`
   authors.set(id, { name })
   return state
 }

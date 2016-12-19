@@ -9,10 +9,10 @@ import type {
 const POST_NOT_FOUND_ERROR = (id: string) => `Couldn’t find a post with id ${id}`
 
 const getUpvotePostResponse = ({ posts }: AppState) =>
-  ({ post: id }: UpvotePostPublicAction): Post => {
-    const post = posts.get(id)
+  ({ postId }: UpvotePostPublicAction): Post => {
+    const post = posts.get(postId)
     if (!post) {
-      throw new Error(POST_NOT_FOUND_ERROR(id))
+      throw new Error(POST_NOT_FOUND_ERROR(postId))
     }
     return post
   }

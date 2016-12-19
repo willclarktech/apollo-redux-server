@@ -6,13 +6,13 @@ export type Author = {
 }
 
 export type Post = {
-  author: ID,
+  authorId: ID,
   title: string,
   votes: number,
 }
 
 export type Secret = {
-  author: ID,
+  authorId: ID,
   content: string,
 }
 

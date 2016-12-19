@@ -7,9 +7,9 @@ export type MutationParams = {
 }
 
 export type PostQueryParams = {
-  author: ID,
+  authorId: ID,
 }
 
 export type AuthorQueryParams = {
-  author: ID,
+  authorId: ID,
 }

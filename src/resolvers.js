@@ -33,11 +33,11 @@ export default {
       const { secrets } = store.getState()
       // $FlowFixMe: https://github.com/facebook/flow/issues/1059
       return [...secrets.values()]
-        .filter(({ author }: Secret): boolean => author === user)
+        .filter(({ authorId }: Secret): boolean => authorId === user)
     },
   },
   Post: {
-    author({ author: id }: AuthorQueryParams): Author {
+    author({ authorId: id }: AuthorQueryParams): Author {
       const { authors } = store.getState()
       const author = authors.get(id)
       if (!author) {
@@ -50,11 +50,11 @@ export default {
     },
   },
   Author: {
-    posts({ author: id }: PostQueryParams): Array<Post> {
+    posts({ authorId: id }: PostQueryParams): Array<Post> {
       const { posts } = store.getState()
       // $FlowFixMe: https://github.com/facebook/flow/issues/1059
       return [...posts.values()]
-        .filter(({ author }: Post): boolean => author === id)
+        .filter(({ authorId }: Post): boolean => authorId === id)
     },
   },
   Mutation: {

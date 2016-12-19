@@ -1,36 +1,40 @@
 // @flow
-import { find } from 'lodash'
-
 import type {
   Action,
   AppState,
-  CreateAuthorAction,
-  CreatePostAction,
-  UpvotePostAction,
+  CreateAuthorPrivateAction,
+  // CreatePostPrivateAction,
+  CreatePostPublicAction,
+  // UpvotePostPrivateAction,
+  UpvotePostPublicAction,
 } from './types/flow'
 
-const upvotePost = (state: AppState) => (action: UpvotePostAction): AppState => {
-  const { postId: id } = action
-  const post = find(state.posts, { id })
+const upvotePost = (state: AppState) => (action: UpvotePostPublicAction): AppState => {
+  const { posts } = state
+  const { post: id } = action
+  const post = posts.get(id)
   if (!post) throw new Error(`Couldn’t find post with id ${id}`)
   post.votes += 1
   return state
 }
 
-const createPost = (state: AppState) => (action: CreatePostAction): AppState => {
-  const { authorId, title } = action
-  state.posts.push({
-    id: state.posts.length + 1,
-    authorId,
+const createPost = (state: AppState) => (action: CreatePostPublicAction): AppState => {
+  const { posts } = state
+  const { author, title } = action
+  const id = `${posts.size + 1}`
+  posts.set(id, {
+    author,
     title,
     votes: 0,
   })
   return state
 }
 
-const createAuthor = (state: AppState) => (action: CreateAuthorAction): AppState => {
-  const { id, name } = action
-  state.authors.push({ id, name })
+const createAuthor = (state: AppState) => (action: CreateAuthorPrivateAction): AppState => {
+  const { authors } = state
+  const { author, name } = action
+  const id = author ? author : `${authors.size + 1}`
+  authors.set(id, { name })
   return state
 }
 

@@ -2,7 +2,7 @@
 import passport from 'koa-passport'
 import { Strategy } from 'passport-github'
 import { find } from 'lodash'
-import type { Action } from './types/flow'
+import type { CreateAuthorPrivateAction } from './types/flow'
 import CONFIG from './server.config'
 import store from './store'
 import logger from './logger'
@@ -23,15 +23,15 @@ passport.use(new Strategy({
   clientSecret: GITHUB_CLIENT_SECRET,
   callbackURL: `http://${HOST}:${PORT}${GITHUB_CALLBACK}`,
 }, (token, tokenSecret, profile, done) => {
-  const profileId = parseInt(profile.id, 10)
+  const profileId = profile.id
   console.info(`Got profile ${profileId}`)
 
   const { authors } = store.getState()
   const author = find(authors, { id: profileId })
   if (!author) {
-    const action: Action = {
+    const action: CreateAuthorPrivateAction = {
       type: 'CREATE_AUTHOR',
-      id: profileId,
+      author: profileId,
       name: profile.displayName,
     }
     logger.logAction(action)

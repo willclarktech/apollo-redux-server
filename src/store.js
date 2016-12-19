@@ -6,24 +6,39 @@ import createReducer from './reducer'
 import type {
   Action,
   AppState,
+  Author,
+  Post,
   Reducer,
   ReduxStore,
+  Secret,
 } from './types/flow'
 
+const INITIAL_AUTHORS: Array<Author> = [
+  { name: 'Tom Coleman' },
+  { name: 'Sashko Stubailo' },
+]
+
+const INITIAL_POSTS: Array<Post> = [
+  { author: '1', title: 'Introduction to GraphQL', votes: 2 },
+  { author: '2', title: 'GraphQL Rocks', votes: 3 },
+  { author: '2', title: 'Advanced GraphQL', votes: 1 },
+]
+
+const INITIAL_SECRETS: Array<Secret> = [
+  { author: '11036220', content: 'This is a secret!' },
+  { author: '11036221', content: 'This is someone else’s secret' },
+]
+
 const INITIAL_STATE: AppState = {
-  authors: [
-    { id: 1, name: 'Tom Coleman' },
-    { id: 2, name: 'Sashko Stubailo' },
-  ],
-  posts: [
-    { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-    { id: 2, authorId: 2, title: 'GraphQL Rocks', votes: 3 },
-    { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  ],
-  secrets: [
-    { id: 1, userId: 11036220, content: 'This is a secret!' },
-    { id: 2, userId: 11036221, content: 'This is someone else’s secret' },
-  ],
+  authors: new Map(
+    INITIAL_AUTHORS.map((a, i) => [(i + 1).toString(), a]),
+  ),
+  posts: new Map(
+    INITIAL_POSTS.map((p, i) => [(i + 1).toString(), p]),
+  ),
+  secrets: new Map(
+    INITIAL_SECRETS.map((s, i) => [(i + 1).toString(), s]),
+  ),
 }
 
 const ACTIONS: Array<Action> =

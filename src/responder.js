@@ -1,18 +1,31 @@
 // @flow
-import { find } from 'lodash'
-
 import type {
   Action,
   AppState,
   Post,
-  UpvotePostAction,
+  UpvotePostPublicAction,
 } from './types/flow'
 
-const getUpvotePostResponse = ({ posts }: AppState) => (action: UpvotePostAction): Post =>
-  find(posts, { id: action.postId })
+const POST_NOT_FOUND_ERROR = (id: string) => `Couldn’t find a post with id ${id}`
 
-const getCreatePostResponse = ({ posts }: AppState) => (): Post =>
-  posts[posts.length - 1]
+const getUpvotePostResponse = ({ posts }: AppState) =>
+  ({ post: id }: UpvotePostPublicAction): Post => {
+    const post = posts.get(id)
+    if (!post) {
+      throw new Error(POST_NOT_FOUND_ERROR(id))
+    }
+    return post
+  }
+
+const getCreatePostResponse = ({ posts }: AppState) =>
+  (): Post => {
+    const id = `${posts.size - 1}`
+    const post = posts.get(id)
+    if (!post) {
+      throw new Error(POST_NOT_FOUND_ERROR(id))
+    }
+    return post
+  }
 
 export default (state: AppState) => (action: Action): any => {
   switch (action.type) {

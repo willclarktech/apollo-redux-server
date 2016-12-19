@@ -20,25 +20,41 @@ export default {
   Query: {
     posts(): Array<Post> {
       const { posts } = store.getState()
-      return posts
+      // $FlowFixMe: https://github.com/facebook/flow/issues/1059
+      return [...posts.entries()]
+        .map(([id: string, post: Post]) => ({
+          ...post,
+          id,
+        }))
     },
     secrets(_: any, __: any, ctx: Context): Array<Secret> {
       authenticate(ctx)
       const { user } = ctx.state
       const { secrets } = store.getState()
-      return secrets.filter(({ userId }) => userId === parseInt(user, 10))
+      // $FlowFixMe: https://github.com/facebook/flow/issues/1059
+      return [...secrets.values()]
+        .filter(({ author }: Secret): boolean => author === user)
     },
   },
   Post: {
-    author({ authorId }: PostQueryParams): Post {
+    author({ author: id }: AuthorQueryParams): Author {
       const { authors } = store.getState()
-      return find(authors, { id: authorId })
+      const author = authors.get(id)
+      if (!author) {
+        throw new Error(`Couldn’t find author with id ${id}`)
+      }
+      return {
+        ...author,
+        id,
+      }
     },
   },
   Author: {
-    posts({ id }: AuthorQueryParams): Author {
+    posts({ author: id }: PostQueryParams): Array<Post> {
       const { posts } = store.getState()
-      return filter(posts, { authorId: id })
+      // $FlowFixMe: https://github.com/facebook/flow/issues/1059
+      return [...posts.values()]
+        .filter(({ author }: Post): boolean => author === id)
     },
   },
   Mutation: {

@@ -15,7 +15,3 @@ export type Secret = {
   authorId: ID,
   content: string,
 }
-
-export type WithID<T>
-  = T
-  & { id: ID }

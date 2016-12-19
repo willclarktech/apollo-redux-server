@@ -1,8 +1,6 @@
 // @flow
 export type {
-  AuthorQueryParams,
   MutationParams,
-  PostQueryParams,
 } from './apollo.types'
 
 export type {
@@ -13,6 +11,7 @@ export type {
 
 export type {
   ID,
+  WithID,
 } from './helper.types'
 
 export type {

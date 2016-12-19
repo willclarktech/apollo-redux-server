@@ -1,6 +1,5 @@
 // @flow
 import type { Context } from 'koa'
-import { filter, find } from 'lodash'
 import store from './store'
 import validate from './validator'
 import authenticate from './authenticator'
@@ -8,36 +7,41 @@ import logger from './logger'
 import getMutationResponse from './responder'
 
 import type {
-  AuthorQueryParams,
   MutationParams,
-  PostQueryParams,
   Author,
   Post,
   Secret,
+  ID,
+  WithID,
 } from './types/flow'
 
 export default {
   Query: {
-    posts(): Array<Post> {
+    posts(): Array<WithID<Post>> {
       const { posts } = store.getState()
       // $FlowFixMe: https://github.com/facebook/flow/issues/1059
       return [...posts.entries()]
-        .map(([id: string, post: Post]) => ({
+        .map(([id: ID, post: Post]) => ({
           ...post,
           id,
         }))
     },
-    secrets(_: any, __: any, ctx: Context): Array<Secret> {
+    secrets(_: any, __: any, ctx: Context): Array<WithID<Secret>> {
       authenticate(ctx)
       const { user } = ctx.state
       const { secrets } = store.getState()
       // $FlowFixMe: https://github.com/facebook/flow/issues/1059
-      return [...secrets.values()]
-        .filter(({ authorId }: Secret): boolean => authorId === user)
+      return [...secrets.entries()]
+        // eslint-disable-next-line no-unused-vars
+        .filter(([id: ID, { authorId }: Secret]): boolean => authorId === user)
+        .map(([id: ID, secret: Secret]) => ({
+          ...secret,
+          id,
+        }))
     },
   },
   Post: {
-    author({ authorId: id }: AuthorQueryParams): Author {
+    author({ authorId: id }: WithID<Post>): WithID<Author> {
       const { authors } = store.getState()
       const author = authors.get(id)
       if (!author) {
@@ -50,11 +54,16 @@ export default {
     },
   },
   Author: {
-    posts({ authorId: id }: PostQueryParams): Array<Post> {
+    posts({ id }: WithID<Author>): Array<WithID<Post>> {
       const { posts } = store.getState()
       // $FlowFixMe: https://github.com/facebook/flow/issues/1059
-      return [...posts.values()]
-        .filter(({ authorId }: Post): boolean => authorId === id)
+      return [...posts.entries()]
+        // eslint-disable-next-line no-unused-vars
+        .filter(([postId: ID, { authorId }: Post]): boolean => authorId === id)
+        .map(([postId: ID, post: Post]) => ({
+          ...post,
+          id: postId,
+        }))
     },
   },
   Mutation: {

@@ -24,7 +24,7 @@ const getUpvotePostResponse = (state: AppState) =>
 const getCreatePostResponse = (state: AppState) =>
   (): Post => {
     const posts = state.get(POSTS)
-    const id = `${posts.size - 1}`
+    const id = `${posts.size}`
     const post = posts.get(id)
     if (!post) {
       throw new Error(POST_NOT_FOUND_ERROR(id))

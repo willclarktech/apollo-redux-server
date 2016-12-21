@@ -1,6 +1,7 @@
 // @flow
 import type { Context } from 'koa'
 import {
+  AUTHOR_ID,
   AUTHORS,
   POSTS,
   SECRETS,
@@ -19,7 +20,7 @@ import type {
   ID,
 } from '../types/flow'
 
-const makeVanilla = ([id, v]) => ({
+const convertMapIntoObjectWithId = ([id, v]) => ({
   ...v.toObject(),
   id,
 })
@@ -32,10 +33,10 @@ export default {
         .get(POSTS)
 
       return [...posts.entries()]
-        .map(makeVanilla)
+        .map(convertMapIntoObjectWithId)
     },
     secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
-      authenticate(ctx)
+      // authenticate(ctx)
       const { user } = ctx.state
       const secrets = store
         .getState()
@@ -43,8 +44,8 @@ export default {
 
       return [...secrets.entries()]
         // eslint-disable-next-line no-unused-vars
-        .filter(([id: ID, { authorId }: Secret]): boolean => authorId === user)
-        .map(makeVanilla)
+        .filter(([id: ID, secret: Secret]): boolean => secret.get(AUTHOR_ID) === user)
+        .map(convertMapIntoObjectWithId)
     },
   },
   Post: {
@@ -53,27 +54,34 @@ export default {
         .getState()
         .get(AUTHORS)
         .get(id)
+
       if (!author) {
         throw new Error(`Couldn’t find author with id ${id}`)
       }
-      return makeVanilla([id, author])
+
+      return convertMapIntoObjectWithId([id, author])
     },
   },
   Author: {
     posts({ id }: AuthorWithID): Array<PostWithID> {
-      const posts = store.getState().get(POSTS)
+      const posts = store
+        .getState()
+        .get(POSTS)
+
       return [...posts.entries()]
         // eslint-disable-next-line no-unused-vars
         .filter(([postId: ID, { authorId }: Post]): boolean => authorId === id)
-        .map(makeVanilla)
+        .map(convertMapIntoObjectWithId)
     },
   },
   Mutation: {
     dispatch(_: any, { action }: MutationParams, ctx: Context): any {
       validate(ctx)(action)
       authenticate(ctx)(action)
+
       logger.logAction(action)
       store.dispatch(action)
+
       return getMutationResponse(store.getState())(action)
     },
   },

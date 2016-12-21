@@ -37,16 +37,12 @@ const INITIAL_SECRETS: Array<Secret> = [
   { authorId: '11036221', content: 'This is someone else’s secret' },
 ].map(makeNewRecord(SecretRecord))
 
+const createTupleWithId = (v: any, i: number) => [(i + 1).toString(), v]
+
 const INITIAL_STATE: AppState = new AppStateRecord({
-  authors: ImmutableMap(
-    INITIAL_AUTHORS.map((a, i) => [(i + 1).toString(), a]),
-  ),
-  posts: ImmutableMap(
-    INITIAL_POSTS.map((p, i) => [(i + 1).toString(), p]),
-  ),
-  secrets: ImmutableMap(
-    INITIAL_SECRETS.map((s, i) => [(i + 1).toString(), s]),
-  ),
+  authors: ImmutableMap(INITIAL_AUTHORS.map(createTupleWithId)),
+  posts: ImmutableMap(INITIAL_POSTS.map(createTupleWithId)),
+  secrets: ImmutableMap(INITIAL_SECRETS.map(createTupleWithId)),
 })
 
 const ACTIONS: Array<Action> =

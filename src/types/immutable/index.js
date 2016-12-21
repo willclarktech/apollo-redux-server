@@ -4,6 +4,7 @@ import {
   Record as ImmutableRecord,
 } from 'immutable'
 import {
+  AUTHOR_ID,
   AUTHORS,
   POSTS,
   SECRETS,
@@ -12,12 +13,12 @@ import {
 
 export const AuthorRecord = ImmutableRecord({ name: '' })
 export const PostRecord = ImmutableRecord({
-  authorId: '',
+  [AUTHOR_ID]: '',
   title: '',
   [VOTES]: 0,
 })
 export const SecretRecord = ImmutableRecord({
-  authorId: '',
+  [AUTHOR_ID]: '',
   content: '',
 })
 

@@ -6,5 +6,4 @@ import typeDefs from './types/graphql'
 export default makeExecutableSchema({
   typeDefs,
   resolvers,
-  logger: { log: console.error },
 })

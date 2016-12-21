@@ -18,30 +18,34 @@ const {
   PATHS: { GITHUB_CALLBACK },
 } = CONFIG
 
-passport.use(new Strategy({
+const strategyOptions = {
   clientID: GITHUB_CLIENT_ID,
   clientSecret: GITHUB_CLIENT_SECRET,
   callbackURL: `http://${HOST}:${PORT}${GITHUB_CALLBACK}`,
-}, (token, tokenSecret, profile, done) => {
-  const profileId = profile.id
-  console.info(`Got profile ${profileId}`)
+}
+
+const strategyCallback = (token, tokenSecret, profile, done) => {
+  const authorId = profile.id
+  console.info(`Got profile ${authorId}`)
 
   const author = store
     .getState()
     .get(AUTHORS)
-    .get(profileId)
+    .get(authorId)
+
   if (!author) {
     const action: CreateAuthorPrivateAction = {
       type: 'CREATE_AUTHOR',
-      authorId: profileId,
+      authorId,
       name: profile.displayName,
     }
     logger.logAction(action)
     store.dispatch(action)
   }
 
-  done(null, profileId)
-}))
+  done(null, authorId)
+}
 
+passport.use(new Strategy(strategyOptions, strategyCallback))
 passport.serializeUser((userId, done) => done(null, userId))
 passport.deserializeUser((userId, done) => done(null, userId))

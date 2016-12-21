@@ -26,8 +26,10 @@ passport.use(new Strategy({
   const profileId = profile.id
   console.info(`Got profile ${profileId}`)
 
-  const { authors } = store.getState()
-  const author = find(authors, { id: profileId })
+  const author = store
+    .getState()
+    .get('authors')
+    .get(profileId)
   if (!author) {
     const action: CreateAuthorPrivateAction = {
       type: 'CREATE_AUTHOR',

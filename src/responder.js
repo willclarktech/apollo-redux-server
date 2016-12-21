@@ -8,8 +8,9 @@ import type {
 
 const POST_NOT_FOUND_ERROR = (id: string) => `Couldn’t find a post with id ${id}`
 
-const getUpvotePostResponse = ({ posts }: AppState) =>
+const getUpvotePostResponse = (state: AppState) =>
   ({ postId }: UpvotePostPublicAction): Post => {
+    const posts = state.get('posts')
     const post = posts.get(postId)
     if (!post) {
       throw new Error(POST_NOT_FOUND_ERROR(postId))
@@ -17,8 +18,9 @@ const getUpvotePostResponse = ({ posts }: AppState) =>
     return post
   }
 
-const getCreatePostResponse = ({ posts }: AppState) =>
+const getCreatePostResponse = (state: AppState) =>
   (): Post => {
+    const posts = state.get('posts')
     const id = `${posts.size - 1}`
     const post = posts.get(id)
     if (!post) {

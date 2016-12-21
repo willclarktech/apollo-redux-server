@@ -15,6 +15,12 @@ export const SecretRecord = ImmutableRecord({
   content: '',
 })
 
+export const AppStateRecord = ImmutableRecord({
+  authors: ImmutableMap(),
+  posts: ImmutableMap(),
+  secrets: ImmutableMap(),
+})
+
 type RecordClassType
   = AuthorRecord
   | PostRecord
@@ -22,9 +28,3 @@ type RecordClassType
 
 export const makeNewRecord = (RecordClass: RecordClassType) => (obj: Object) =>
     new RecordClass(obj)
-
-export const AppStateRecord = ImmutableRecord({
-  authors: ImmutableMap(),
-  posts: ImmutableMap(),
-  secrets: ImmutableMap(),
-})

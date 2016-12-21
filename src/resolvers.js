@@ -8,62 +8,59 @@ import getMutationResponse from './responder'
 
 import type {
   MutationParams,
-  Author,
-  Post,
-  Secret,
+  AuthorWithID,
+  PostWithID,
+  SecretWithID,
   ID,
-  WithID,
 } from './types/flow'
+
+const makeVanilla = ([id, v]) => ({
+  ...v.toObject(),
+  id,
+})
 
 export default {
   Query: {
-    posts(): Array<WithID<Post>> {
-      const { posts } = store.getState()
-      // $FlowFixMe: https://github.com/facebook/flow/issues/1059
+    posts(): Array<PostWithID> {
+      const posts = store
+        .getState()
+        .get('posts')
+
       return [...posts.entries()]
-        .map(([id: ID, post: Post]) => ({
-          ...post,
-          id,
-        }))
+        .map(makeVanilla)
     },
-    secrets(_: any, __: any, ctx: Context): Array<WithID<Secret>> {
+    secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
       authenticate(ctx)
       const { user } = ctx.state
-      const { secrets } = store.getState()
-      // $FlowFixMe: https://github.com/facebook/flow/issues/1059
+      const secrets = store
+        .getState()
+        .get('posts')
+
       return [...secrets.entries()]
         // eslint-disable-next-line no-unused-vars
         .filter(([id: ID, { authorId }: Secret]): boolean => authorId === user)
-        .map(([id: ID, secret: Secret]) => ({
-          ...secret,
-          id,
-        }))
+        .map(makeVanilla)
     },
   },
   Post: {
-    author({ authorId: id }: WithID<Post>): WithID<Author> {
-      const { authors } = store.getState()
-      const author = authors.get(id)
+    author({ authorId: id }: PostWithID): AuthorWithID {
+      const author = store
+        .getState()
+        .get('authors')
+        .get(id)
       if (!author) {
         throw new Error(`Couldn’t find author with id ${id}`)
       }
-      return {
-        ...author,
-        id,
-      }
+      return makeVanilla([id, author])
     },
   },
   Author: {
-    posts({ id }: WithID<Author>): Array<WithID<Post>> {
-      const { posts } = store.getState()
-      // $FlowFixMe: https://github.com/facebook/flow/issues/1059
+    posts({ id }: AuthorWithID): Array<PostWithID> {
+      const posts = store.getState().get('posts')
       return [...posts.entries()]
         // eslint-disable-next-line no-unused-vars
         .filter(([postId: ID, { authorId }: Post]): boolean => authorId === id)
-        .map(([postId: ID, post: Post]) => ({
-          ...post,
-          id: postId,
-        }))
+        .map(makeVanilla)
     },
   },
   Mutation: {

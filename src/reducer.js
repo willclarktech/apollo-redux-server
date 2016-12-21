@@ -1,41 +1,49 @@
 // @flow
+import {
+  AuthorRecord,
+  PostRecord,
+} from './types/immutable'
 import type {
   Action,
   AppState,
   CreateAuthorPrivateAction,
-  // CreatePostPrivateAction,
   CreatePostPublicAction,
-  // UpvotePostPrivateAction,
+  Post,
   UpvotePostPublicAction,
 } from './types/flow'
 
 const upvotePost = (state: AppState) => (action: UpvotePostPublicAction): AppState => {
-  const { posts } = state
   const { postId } = action
-  const post = posts.get(postId)
-  if (!post) throw new Error(`Couldn’t find post with id ${postId}`)
-  post.votes += 1
-  return state
+  const posts = state.get('posts')
+  const oldPost = posts.get(postId)
+  if (!oldPost) throw new Error(`Couldn’t find post with id ${postId}`)
+  const oldVotes = oldPost.get('votes')
+
+  const newPost = oldPost.set('votes', oldVotes + 1)
+  const newPosts = posts.set(postId, newPost)
+  return state.set('posts', newPosts)
 }
 
 const createPost = (state: AppState) => (action: CreatePostPublicAction): AppState => {
-  const { posts } = state
   const { authorId, title } = action
+  const posts = state.get('posts')
   const id = `${posts.size + 1}`
-  posts.set(id, {
+  const newPost: Post = PostRecord({
     authorId,
     title,
     votes: 0,
   })
-  return state
+  const newPosts = posts.set(id, newPost)
+  return state.set('posts', newPosts)
 }
 
 const createAuthor = (state: AppState) => (action: CreateAuthorPrivateAction): AppState => {
-  const { authors } = state
+  const authors = state.get('authors')
   const { authorId, name } = action
   const id = authorId ? authorId : `${authors.size + 1}`
-  authors.set(id, { name })
-  return state
+  const newAuthor = AuthorRecord({ name })
+  const newAuthors = authors.set(id, newAuthor)
+  return state.set('authors', newAuthors)
 }
 
 export default (initialState: ?AppState) => (

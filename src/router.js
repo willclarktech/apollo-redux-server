@@ -8,6 +8,7 @@ import CONFIG from './server.config'
 
 require('./auth')
 
+const GITHUB = 'github'
 const {
   GRAPHQL: GRAPHQL_PATH,
   GITHUB: GITHUB_PATH,
@@ -35,8 +36,8 @@ const router = new Router()
 router.post(GRAPHQL_PATH, graphqlKoa(GRAPHQL_OPTIONS))
 router.get(GRAPHQL_PATH, graphiqlKoa(GRAPHIQL_OPTIONS))
 
-router.get(GITHUB_PATH, passport.authenticate('github'))
-router.get(GITHUB_CALLBACK_PATH, passport.authenticate('github', AUTH_OPTIONS))
+router.get(GITHUB_PATH, passport.authenticate(GITHUB))
+router.get(GITHUB_CALLBACK_PATH, passport.authenticate(GITHUB, AUTH_OPTIONS))
 router.get(LOGOUT_PATH, ctx => {
   ctx.logout()
   ctx.redirect(GRAPHQL_PATH)

@@ -3,12 +3,18 @@ import {
   Map as ImmutableMap,
   Record as ImmutableRecord,
 } from 'immutable'
+import {
+  AUTHORS,
+  POSTS,
+  SECRETS,
+  VOTES,
+} from '../../constants'
 
 export const AuthorRecord = ImmutableRecord({ name: '' })
 export const PostRecord = ImmutableRecord({
   authorId: '',
   title: '',
-  votes: 0,
+  [VOTES]: 0,
 })
 export const SecretRecord = ImmutableRecord({
   authorId: '',
@@ -16,9 +22,9 @@ export const SecretRecord = ImmutableRecord({
 })
 
 export const AppStateRecord = ImmutableRecord({
-  authors: ImmutableMap(),
-  posts: ImmutableMap(),
-  secrets: ImmutableMap(),
+  [AUTHORS]: ImmutableMap(),
+  [POSTS]: ImmutableMap(),
+  [SECRETS]: ImmutableMap(),
 })
 
 type RecordClassType

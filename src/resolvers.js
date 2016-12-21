@@ -5,6 +5,11 @@ import validate from './validator'
 import authenticate from './authenticator'
 import logger from './logger'
 import getMutationResponse from './responder'
+import {
+  AUTHORS,
+  POSTS,
+  SECRETS,
+} from './constants'
 
 import type {
   MutationParams,
@@ -24,7 +29,7 @@ export default {
     posts(): Array<PostWithID> {
       const posts = store
         .getState()
-        .get('posts')
+        .get(POSTS)
 
       return [...posts.entries()]
         .map(makeVanilla)
@@ -34,7 +39,7 @@ export default {
       const { user } = ctx.state
       const secrets = store
         .getState()
-        .get('posts')
+        .get(SECRETS)
 
       return [...secrets.entries()]
         // eslint-disable-next-line no-unused-vars
@@ -46,7 +51,7 @@ export default {
     author({ authorId: id }: PostWithID): AuthorWithID {
       const author = store
         .getState()
-        .get('authors')
+        .get(AUTHORS)
         .get(id)
       if (!author) {
         throw new Error(`Couldn’t find author with id ${id}`)
@@ -56,7 +61,7 @@ export default {
   },
   Author: {
     posts({ id }: AuthorWithID): Array<PostWithID> {
-      const posts = store.getState().get('posts')
+      const posts = store.getState().get(POSTS)
       return [...posts.entries()]
         // eslint-disable-next-line no-unused-vars
         .filter(([postId: ID, { authorId }: Post]): boolean => authorId === id)

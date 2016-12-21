@@ -1,9 +1,9 @@
 // @flow
 import passport from 'koa-passport'
 import { Strategy } from 'passport-github'
-import { find } from 'lodash'
 import type { CreateAuthorPrivateAction } from './types/flow'
 import CONFIG from './server.config'
+import { AUTHORS } from './constants'
 import store from './store'
 import logger from './logger'
 
@@ -28,7 +28,7 @@ passport.use(new Strategy({
 
   const author = store
     .getState()
-    .get('authors')
+    .get(AUTHORS)
     .get(profileId)
   if (!author) {
     const action: CreateAuthorPrivateAction = {

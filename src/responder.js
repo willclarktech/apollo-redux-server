@@ -1,4 +1,5 @@
 // @flow
+import { POSTS } from './constants'
 import type {
   Action,
   AppState,
@@ -10,8 +11,10 @@ const POST_NOT_FOUND_ERROR = (id: string) => `Couldn’t find a post with id ${i
 
 const getUpvotePostResponse = (state: AppState) =>
   ({ postId }: UpvotePostPublicAction): Post => {
-    const posts = state.get('posts')
-    const post = posts.get(postId)
+    const post = state
+      .get(POSTS)
+      .get(postId)
+
     if (!post) {
       throw new Error(POST_NOT_FOUND_ERROR(postId))
     }
@@ -20,7 +23,7 @@ const getUpvotePostResponse = (state: AppState) =>
 
 const getCreatePostResponse = (state: AppState) =>
   (): Post => {
-    const posts = state.get('posts')
+    const posts = state.get(POSTS)
     const id = `${posts.size - 1}`
     const post = posts.get(id)
     if (!post) {

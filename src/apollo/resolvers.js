@@ -36,7 +36,7 @@ export default {
         .map(convertMapIntoObjectWithId)
     },
     secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
-      // authenticate(ctx)
+      authenticate(ctx)
       const { user } = ctx.state
       const secrets = store
         .getState()

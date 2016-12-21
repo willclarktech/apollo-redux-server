@@ -13,6 +13,8 @@ export type {
 } from './domain.types'
 
 export type {
+  Converter,
+  ConverterWithFilter,
   ID,
   WithID,
 } from './helper.types'

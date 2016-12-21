@@ -1,7 +1,6 @@
 // @flow
 import type { Context } from 'koa'
 import {
-  AUTHOR_ID,
   AUTHORS,
   POSTS,
   SECRETS,
@@ -13,17 +12,33 @@ import authenticate from './authenticator'
 import getMutationResponse from './responder'
 
 import type {
-  MutationParams,
   AuthorWithID,
+  Converter,
+  ConverterWithFilter,
+  ID,
+  MutationParams,
   PostWithID,
   SecretWithID,
-  ID,
 } from '../types/flow'
 
 const convertMapIntoObjectWithId = ([id, v]) => ({
   ...v.toObject(),
   id,
 })
+
+const doesAuthorIdMatchUser = (user: ID) =>
+  // eslint-disable-next-line no-unused-vars
+  ([_: any, { authorId }: { authorId: ID }]): boolean =>
+  user === authorId
+
+const convertToArray: Converter = map =>
+  [...map.entries()]
+    .map(convertMapIntoObjectWithId)
+
+const convertToArrayWithFilter: ConverterWithFilter = filter => map =>
+  [...map.entries()]
+    .filter(filter)
+    .map(convertMapIntoObjectWithId)
 
 export default {
   Query: {
@@ -32,8 +47,7 @@ export default {
         .getState()
         .get(POSTS)
 
-      return [...posts.entries()]
-        .map(convertMapIntoObjectWithId)
+      return convertToArray(posts)
     },
     secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
       authenticate(ctx)
@@ -42,10 +56,7 @@ export default {
         .getState()
         .get(SECRETS)
 
-      return [...secrets.entries()]
-        // eslint-disable-next-line no-unused-vars
-        .filter(([id: ID, secret: Secret]): boolean => secret.get(AUTHOR_ID) === user)
-        .map(convertMapIntoObjectWithId)
+      return convertToArrayWithFilter(doesAuthorIdMatchUser(user))(secrets)
     },
   },
   Post: {
@@ -68,10 +79,7 @@ export default {
         .getState()
         .get(POSTS)
 
-      return [...posts.entries()]
-        // eslint-disable-next-line no-unused-vars
-        .filter(([postId: ID, { authorId }: Post]): boolean => authorId === id)
-        .map(convertMapIntoObjectWithId)
+      return convertToArrayWithFilter(doesAuthorIdMatchUser(id))(posts)
     },
   },
   Mutation: {

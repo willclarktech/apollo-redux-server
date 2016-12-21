@@ -1,15 +1,15 @@
 // @flow
 import type { Context } from 'koa'
-import store from './store'
-import validate from './validator'
-import authenticate from './authenticator'
-import logger from './logger'
-import getMutationResponse from './responder'
 import {
   AUTHORS,
   POSTS,
   SECRETS,
-} from './constants'
+} from '../types/constants'
+import logger from '../logger'
+import store from '../redux/store'
+import validate from '../redux/validator'
+import authenticate from './authenticator'
+import getMutationResponse from './responder'
 
 import type {
   MutationParams,
@@ -17,7 +17,7 @@ import type {
   PostWithID,
   SecretWithID,
   ID,
-} from './types/flow'
+} from '../types/flow'
 
 const makeVanilla = ([id, v]) => ({
   ...v.toObject(),

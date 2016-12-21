@@ -1,6 +1,6 @@
 // @flow
 import type { Context } from 'koa'
-import type { ID, Action } from './types/flow'
+import type { ID, Action } from '../types/flow'
 
 const assertIsAuthenticated = (ctx: Context) => ctx.assert(
   ctx.isAuthenticated(),

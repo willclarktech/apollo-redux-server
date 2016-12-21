@@ -3,7 +3,7 @@ import type { Context } from 'koa'
 import Router from 'koa-router'
 import passport from 'koa-passport'
 import { graphqlKoa, graphiqlKoa } from 'graphql-server-koa'
-import schema from './schema'
+import schema from '../apollo/schema'
 import CONFIG from './server.config'
 
 require('./auth')

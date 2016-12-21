@@ -1,9 +1,7 @@
 // @flow
 import fs from 'fs'
 import { createStore } from 'redux'
-import {
-  Map as ImmutableMap,
-} from 'immutable'
+import { Map as ImmutableMap } from 'immutable'
 import createReducer from './reducer'
 import {
   makeNewRecord,
@@ -11,7 +9,7 @@ import {
   AuthorRecord,
   PostRecord,
   SecretRecord,
-} from './types/immutable'
+} from '../types/immutable'
 
 import type {
   Action,
@@ -21,7 +19,7 @@ import type {
   Reducer,
   ReduxStore,
   Secret,
-} from './types/flow'
+} from '../types/flow'
 
 const INITIAL_AUTHORS: Array<Author> = [
   { name: 'Tom Coleman' },

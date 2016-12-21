@@ -2,7 +2,7 @@
 import {
   AuthorRecord,
   PostRecord,
-} from './types/immutable'
+} from '../types/immutable'
 import type {
   Action,
   AppState,
@@ -10,12 +10,12 @@ import type {
   CreatePostPublicAction,
   Post,
   UpvotePostPublicAction,
-} from './types/flow'
+} from '../types/flow'
 import {
   AUTHORS,
   POSTS,
   VOTES,
-} from './constants'
+} from '../types/constants'
 
 const upvotePost = (state: AppState) => (action: UpvotePostPublicAction): AppState => {
   const { postId } = action

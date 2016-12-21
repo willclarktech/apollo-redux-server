@@ -1,11 +1,11 @@
 // @flow
 import passport from 'koa-passport'
 import { Strategy } from 'passport-github'
-import type { CreateAuthorPrivateAction } from './types/flow'
+import logger from '../logger'
+import type { CreateAuthorPrivateAction } from '../types/flow'
+import { AUTHORS } from '../types/constants'
+import store from '../redux/store'
 import CONFIG from './server.config'
-import { AUTHORS } from './constants'
-import store from './store'
-import logger from './logger'
 
 const {
   GITHUB_CLIENT_ID,

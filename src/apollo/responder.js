@@ -1,11 +1,11 @@
 // @flow
-import { POSTS } from './constants'
+import { POSTS } from '../types/constants'
 import type {
   Action,
   AppState,
   Post,
   UpvotePostPublicAction,
-} from './types/flow'
+} from '../types/flow'
 
 const POST_NOT_FOUND_ERROR = (id: string) => `Couldn’t find a post with id ${id}`
 

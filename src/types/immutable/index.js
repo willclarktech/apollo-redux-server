@@ -8,7 +8,7 @@ import {
   POSTS,
   SECRETS,
   VOTES,
-} from '../../constants'
+} from '../constants'
 
 export const AuthorRecord = ImmutableRecord({ name: '' })
 export const PostRecord = ImmutableRecord({

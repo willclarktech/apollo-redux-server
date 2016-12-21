@@ -5,8 +5,11 @@ export type {
 
 export type {
   Author,
+  AuthorWithID,
   Post,
+  PostWithID,
   Secret,
+  SecretWithID,
 } from './domain.types'
 
 export type {

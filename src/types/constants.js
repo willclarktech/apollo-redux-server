@@ -1,3 +1,4 @@
+// @flow
 export const AUTHOR_ID = 'authorId'
 export const AUTHORS = 'authors'
 export const POSTS = 'posts'

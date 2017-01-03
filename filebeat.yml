@@ -12,7 +12,7 @@ filebeat:
   prospectors:
     -
       paths:
-        - ./actions.log
+        - ./logs/*.log
       document_type: redux
       tags: ["action"]
       json.keys_under_root: true

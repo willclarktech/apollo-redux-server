@@ -1,8 +1,8 @@
 // @flow
-import fs from 'fs'
 import { createStore } from 'redux'
 import { Map as ImmutableMap } from 'immutable'
 import createReducer from './reducer'
+import { getActionsFromLogs } from '../logger/helpers'
 import {
   makeNewRecord,
   AppStateRecord,
@@ -45,11 +45,7 @@ const INITIAL_STATE: AppState = new AppStateRecord({
   secrets: ImmutableMap(INITIAL_SECRETS.map(createTupleWithId)),
 })
 
-const ACTIONS: Array<Action> =
-  fs.readFileSync('actions.log', 'utf-8')
-    .split('\n')
-    .filter(action => !!action)
-    .map(action => JSON.parse(action))
+const ACTIONS: Array<Action> = getActionsFromLogs()
 
 const initialisedState: AppState =
   ACTIONS.reduce(createReducer(), INITIAL_STATE)

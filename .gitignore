@@ -3,6 +3,6 @@ npm-debug.log
 /filebeat/
 
 .env
-actions.log
+/logs/
 
 TODO.md

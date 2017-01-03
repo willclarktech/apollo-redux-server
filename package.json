@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "./bin/install-filebeat.sh",
     "start": "nodemon src/index.js --watch src --exec babel-node",
+    "filebeat": "./filebeat/filebeat -c filebeat.yml -e",
     "lint": "eslint src",
     "lint:fix": "npm run lint --fix",
     "test": "echo \"Error: no test specified\" && exit 1"

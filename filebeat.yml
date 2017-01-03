@@ -1,0 +1,19 @@
+output:
+  logstash:
+    enabled: true
+    hosts:
+      - localhost:5044
+    ssl:
+      certificate_authorities:
+        - ./logstash-beats.crt
+    timeout: 15
+
+filebeat:
+  prospectors:
+    -
+      paths:
+        - ./actions.log
+      document_type: redux
+      tags: ["action"]
+      json.keys_under_root: true
+      json.overwrite_keys: true

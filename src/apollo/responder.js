@@ -1,4 +1,6 @@
 // @flow
+import { convertMapIntoObjectWithId } from './helpers'
+
 import { POSTS } from '../types/constants'
 import type {
   Action,
@@ -18,7 +20,8 @@ const getUpvotePostResponse = (state: AppState) =>
     if (!post) {
       throw new Error(POST_NOT_FOUND_ERROR(postId))
     }
-    return post
+
+    return convertMapIntoObjectWithId([postId, post])
   }
 
 const getCreatePostResponse = (state: AppState) =>
@@ -26,10 +29,12 @@ const getCreatePostResponse = (state: AppState) =>
     const posts = state.get(POSTS)
     const id = `${posts.size}`
     const post = posts.get(id)
+
     if (!post) {
       throw new Error(POST_NOT_FOUND_ERROR(id))
     }
-    return post
+
+    return convertMapIntoObjectWithId([id, post])
   }
 
 export default (state: AppState) => (action: Action): any => {

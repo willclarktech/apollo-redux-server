@@ -10,6 +10,7 @@ import store from '../redux/store'
 import validate from '../redux/validator'
 import authenticate from './authenticator'
 import getMutationResponse from './responder'
+import { convertMapIntoObjectWithId } from './helpers'
 
 import type {
   AuthorWithID,
@@ -20,11 +21,6 @@ import type {
   PostWithID,
   SecretWithID,
 } from '../types/flow'
-
-const convertMapIntoObjectWithId = ([id, v]) => ({
-  ...v.toObject(),
-  id,
-})
 
 const doesAuthorIdMatchUser = (user: ID) =>
   // eslint-disable-next-line no-unused-vars

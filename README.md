@@ -16,17 +16,21 @@ npm start
 
 This sets up a GraphQL endpoint for post requests to `localhost:3000/graphql`, and a GraphiQL interface you can navigate to at the same location.
 
-By sending queries via GraphiQL you can see what’s in the redux store at initialisation time. It should match `INITIAL_STATE` from `src/store.js`.
+By sending queries via GraphiQL you can see what’s in the redux store at initialisation time. It should match `INITIAL_STATE` from `src/redux/store.js`.
 
 ## Mutations
 
-As you can see in `src/resolvers.js`, there is only one mutation, `dispatch`:
+As you can see in `src/apollo/resolvers.js`, there is only one mutation, `dispatch`:
 
-```es6
+```js
 Mutation: {
-  dispatch(_, { action }) {
+  dispatch(_: any, { action }: MutationParams, ctx: Context): any {
+    validate(ctx)(action)
+    authenticate(ctx)(action)
+
     logger.logAction(action)
     store.dispatch(action)
+
     return getMutationResponse(store.getState())(action)
   },
 }
@@ -69,35 +73,35 @@ That’s where the logging comes in. Try applying a few mutations, then stop the
 
 Every action that comes in is logged to an append-only store in JSON format. To return the app state to a given point in its history you only need to initialise a new redux store and run through all the actions up until the point you require:
 
-```es6
-// from src/reducer.js
-export default initialState => (
-  state = initialState,
-  action,
-) => {
-  const reducer = reducers[action.type]
-  return reducer
-    ? reducer(state)(action)
-    : state
+```js
+// from src/redux/reducer.js
+export default (initialState: ?AppState) => (
+  state: ?AppState = initialState,
+  action: Action,
+): AppState => {
+  if (!state) {
+    throw new Error('No initial state provided')
+  }
+  switch (action.type) {
+    case 'UPVOTE_POST':
+      return upvotePost(state)(action)
+    // ...
+    default:
+      return state
+  }
 }
 
-// from src/store.js
-import createReducer from './reducer'
+// from src/redux/store.js
+const ACTIONS: Array<Action> = getActionsFromLogs()
 
-const INITIAL_STATE = { ... }
-
-const ACTIONS =
-  fs.readFileSync('actions.log', 'utf-8')
-    .split('\n')
-    .filter(action => !!action)
-    .map(action => JSON.parse(action))
-
-const initialisedState =
+const initialisedState: AppState =
   ACTIONS.reduce(createReducer(), INITIAL_STATE)
 
-const reducer = createReducer(initialisedState)
+const reducer: Reducer = createReducer(initialisedState)
 
-createStore(reducer)
+const store: ReduxStore = createStore(reducer)
+
+export default store
 ```
 
 **This way you get the benefits of immutable data on the back end as well as the front end.**
@@ -105,9 +109,10 @@ createStore(reducer)
 Benefits include:
 - Time travel (apply fewer actions to go back in time)
 - Backwards compatibility (run action history through new code to see if the same end state is reached)
+- Mitigate the effects of bugs by fixing the code and running the history through the reducer to reach the correct result
 - ...
 
-In this proof-of-concept app, the logs are just stored in a text file, but you could just as well use a table in a SQL database, Elasticsearch (to see pretty graphs in Kibana), or a blockchain (e.g. use Bitcoin’s).
+In this proof-of-concept app, the logs are just stored in text files according to date. You could just as well use a table in a SQL database or a blockchain (e.g. use Bitcoin’s). Running `npm run filebeat` will forward the logs from these text files to an expected logstash service running on `localhost:5044` for storage in elasticsearch and display using kibana. As you can see in the `docker-compose.yml` file, I’ve used [Sébastien Pujadas’s excellent docker image](https://elk-docker.readthedocs.io/) to get that up and running.
 
 ## What’s up with all these higher-order functions?
 

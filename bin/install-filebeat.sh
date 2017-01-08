@@ -4,3 +4,4 @@
 mkdir filebeat
 curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.1.1-darwin-x86_64.tar.gz
 tar xzvf filebeat-5.1.1-darwin-x86_64.tar.gz -C filebeat
+rm filebeat-5.1.1-darwin-x86_64.tar.gz

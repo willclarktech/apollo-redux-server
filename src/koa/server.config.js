@@ -2,6 +2,7 @@
 import { Record as ImmutableRecord } from 'immutable'
 
 const PathsRecord = ImmutableRecord({
+  CLIENT: 'http://localhost:3001',
   GRAPHQL: '/graphql',
   LOGOUT: '/logout',
   GITHUB: '/auth/github',

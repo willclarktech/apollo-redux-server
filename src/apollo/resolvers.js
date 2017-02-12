@@ -23,8 +23,7 @@ import type {
 } from '../types/flow'
 
 const doesAuthorIdMatchUser = (user: ID) =>
-  // eslint-disable-next-line no-unused-vars
-  ([_: any, { authorId }: { authorId: ID }]): boolean =>
+  ([, { authorId }: { authorId: ID }]): boolean =>
   user === authorId
 
 const convertToArray: Converter = map =>

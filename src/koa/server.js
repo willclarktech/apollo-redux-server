@@ -13,7 +13,11 @@ const { HOST, PORT } = CONFIG
 const app = new Koa()
 app.keys = ['your-session-secret']
 
-app.use(cors())
+const corsOptions = {
+  credentials: true,
+}
+
+app.use(cors(corsOptions))
 app.use(bodyParser())
 app.use(convert(session()))
 

@@ -33,7 +33,7 @@ const AUTH_OPTIONS = {
 
 const router = new Router()
 
-const logout = ctx => {
+const logout = (ctx: Context) => {
   ctx.logout()
   ctx.redirect(GRAPHQL_PATH)
 }

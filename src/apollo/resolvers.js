@@ -9,7 +9,6 @@ import logger from '../logger'
 import store from '../redux/store'
 import validate from '../redux/validator'
 import authenticate from './authenticator'
-import getMutationResponse from './responder'
 import { convertMapIntoObjectWithId } from './helpers'
 
 import type {
@@ -85,7 +84,7 @@ export default {
       logger.logAction(action)
       store.dispatch(action)
 
-      return getMutationResponse(store.getState())(action)
+      return { success: true }
     },
   },
 }

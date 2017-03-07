@@ -3,10 +3,14 @@ type Query {
   secrets: [Secret]
 }
 
+type Acknowledgment {
+  success: Boolean
+}
+
 type Mutation {
   dispatch(
     action: ActionInput!
-  ): Post
+  ): Acknowledgment
 }
 
 schema {

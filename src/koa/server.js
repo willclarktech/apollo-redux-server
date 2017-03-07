@@ -1,5 +1,6 @@
 // @flow
 import Koa from 'koa'
+import morgan from 'koa-morgan'
 import cors from 'kcors'
 import bodyParser from 'koa-bodyparser'
 import convert from 'koa-convert'
@@ -17,6 +18,7 @@ const corsOptions = {
   credentials: true,
 }
 
+app.use(morgan('dev'))
 app.use(cors(corsOptions))
 app.use(bodyParser())
 app.use(convert(session()))

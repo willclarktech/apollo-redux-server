@@ -10,19 +10,15 @@ import router from './router'
 const { HOST, PORT } = CONFIG
 const { JWT_SECRET, MORGAN_LOG_LEVEL } = process.env
 
-const app = new Koa()
-
-// TODO: remove this?
-const corsOptions = {
-  credentials: true,
-}
 const jwtOptions = {
   secret: JWT_SECRET,
   passthrough: true,
 }
 
+const app = new Koa()
+
 app.use(morgan(MORGAN_LOG_LEVEL))
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(bodyParser())
 app.use(jwt(jwtOptions))
 

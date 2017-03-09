@@ -35,6 +35,19 @@ const convertToArrayWithFilter: ConverterWithFilter = filter => map =>
     .filter(filter)
     .map(convertMapIntoObjectWithId)
 
+const getAuthorById = (id: ID): AuthorWithID => {
+  const author = store
+    .getState()
+    .get(AUTHORS)
+    .get(id)
+
+  if (!author) {
+    throw new Error(`Couldn’t find author with id ${id}`)
+  }
+
+  return convertMapIntoObjectWithId([id, author])
+}
+
 export default {
   Query: {
     posts(): Array<PostWithID> {
@@ -55,31 +68,13 @@ export default {
     },
   },
   Post: {
-    author({ authorId: id }: PostWithID): AuthorWithID {
-      const author = store
-        .getState()
-        .get(AUTHORS)
-        .get(id)
-
-      if (!author) {
-        throw new Error(`Couldn’t find author with id ${id}`)
-      }
-
-      return convertMapIntoObjectWithId([id, author])
+    author({ authorId }: PostWithID): AuthorWithID {
+      return getAuthorById(authorId)
     },
   },
   Secret: {
-    author({ authorId: id }: SecretWithID): AuthorWithID {
-      const author = store
-        .getState()
-        .get(AUTHORS)
-        .get(id)
-
-      if (!author) {
-        throw new Error(`Couldn’t find author with id ${id}`)
-      }
-
-      return convertMapIntoObjectWithId([id, author])
+    author({ authorId }: SecretWithID): AuthorWithID {
+      return getAuthorById(authorId)
     },
   },
   Author: {

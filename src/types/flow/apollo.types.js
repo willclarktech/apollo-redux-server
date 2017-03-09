@@ -1,10 +1,10 @@
 // @flow
 import type { PublicAction } from './redux.types'
 
-export type MutationDispatchResult = {
-  success: boolean,
+export type DispatchParams = {
+  action: PublicAction,
 }
 
-export type MutationParams = {
-  action: PublicAction,
+export type DispatchResult = {
+  success: boolean,
 }

@@ -15,9 +15,9 @@ import type {
   AuthorWithID,
   Converter,
   ConverterWithFilter,
+  DispatchParams,
+  DispatchResult,
   ID,
-  MutationDispatchResult,
-  MutationParams,
   PostWithID,
   SecretWithID,
 } from '../types/flow'
@@ -78,7 +78,7 @@ export default {
     },
   },
   Mutation: {
-    dispatch(_: any, { action }: MutationParams, ctx: Context): MutationDispatchResult {
+    dispatch(_: any, { action }: DispatchParams, ctx: Context): DispatchResult {
       validate(ctx)(action)
       authenticate(ctx)(action)
 

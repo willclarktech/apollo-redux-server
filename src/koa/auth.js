@@ -66,7 +66,10 @@ const getRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): string => {
     { expiresIn: '7d' },
   )
 
-  return `${CLIENT}?token=${token}`
+  const query = { token }
+  const queryString = qs.stringify(query)
+
+  return `${CLIENT}?${queryString}`
 }
 
 export async function handleGitHubCallback(ctx: Context): Promise<void> {

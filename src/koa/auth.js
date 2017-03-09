@@ -61,7 +61,7 @@ const createAuthorIfNecessary = ({ authorId, name }: AuthorDetails): void => {
 
 const getRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): string => {
   const token = jwt.sign(
-    { authorId, name },
+    { id: authorId, name },
     JWT_SECRET,
     { expiresIn: '7d' },
   )

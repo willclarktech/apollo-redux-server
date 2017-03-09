@@ -22,9 +22,9 @@ import type {
   SecretWithID,
 } from '../types/flow'
 
-const doesAuthorIdMatchUser = (user: ID) =>
-  ([, { authorId }: { authorId: ID }]): boolean =>
-  user === authorId
+const doesAuthorIdMatchUserId = (userId: ID) =>
+  ([/* key */, { authorId }: { authorId: ID }]): boolean =>
+  userId === authorId
 
 const convertToArray: Converter = map =>
   [...map.entries()]
@@ -51,11 +51,25 @@ export default {
         .getState()
         .get(SECRETS)
 
-      return convertToArrayWithFilter(doesAuthorIdMatchUser(user))(secrets)
+      return convertToArrayWithFilter(doesAuthorIdMatchUserId(user.id))(secrets)
     },
   },
   Post: {
     author({ authorId: id }: PostWithID): AuthorWithID {
+      const author = store
+        .getState()
+        .get(AUTHORS)
+        .get(id)
+
+      if (!author) {
+        throw new Error(`Couldn’t find author with id ${id}`)
+      }
+
+      return convertMapIntoObjectWithId([id, author])
+    },
+  },
+  Secret: {
+    author({ authorId: id }: SecretWithID): AuthorWithID {
       const author = store
         .getState()
         .get(AUTHORS)
@@ -74,7 +88,7 @@ export default {
         .getState()
         .get(POSTS)
 
-      return convertToArrayWithFilter(doesAuthorIdMatchUser(id))(posts)
+      return convertToArrayWithFilter(doesAuthorIdMatchUserId(id))(posts)
     },
   },
   Mutation: {

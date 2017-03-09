@@ -12,7 +12,7 @@ import router from './router'
 const { HOST, PORT } = CONFIG
 
 const app = new Koa()
-app.keys = ['your-session-secret']
+app.keys = [process.env.SESSION_SECRET]
 
 const corsOptions = {
   credentials: true,

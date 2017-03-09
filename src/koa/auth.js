@@ -26,7 +26,7 @@ const {
   },
 } = CONFIG
 
-export function redirectToGitHub(ctx: Context) {
+export function redirectToGitHub(ctx: Context): void {
   const query = {
     client_id: GITHUB_CLIENT_ID,
     redirect_uri: `http://${HOST}:${PORT}${GITHUB_CALLBACK}`,
@@ -37,15 +37,12 @@ export function redirectToGitHub(ctx: Context) {
   ctx.redirect(url)
 }
 
-export async function handleGitHubCallback(ctx: Context) {
-  const { code } = ctx.query
-  const { data: { access_token } } = await getGitHubAccessToken(code)
-  const { data: {
-    id,
-    name,
-  } } = await getGitHubUser(access_token)
+type AuthorDetails = {
+  authorId: string,
+  name: string,
+}
 
-  const authorId = `${id}`
+const createAuthorIfNecessary = ({ authorId, name }: AuthorDetails): void => {
   const author = store
     .getState()
     .get(AUTHORS)
@@ -60,13 +57,31 @@ export async function handleGitHubCallback(ctx: Context) {
     logger.logAction(action)
     store.dispatch(action)
   }
+}
 
+const getRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): string => {
   const token = jwt.sign(
     { authorId, name },
     JWT_SECRET,
     { expiresIn: '7d' },
   )
 
-  const url = `${CLIENT}?token=${token}`
+  return `${CLIENT}?token=${token}`
+}
+
+export async function handleGitHubCallback(ctx: Context): Promise<void> {
+  const { code } = ctx.query
+  const { data: { access_token } } = await getGitHubAccessToken(code)
+  const { data: {
+    id,
+    name,
+  } } = await getGitHubUser(access_token)
+
+  const authorId = `${id}`
+  const authorDetails = { authorId, name }
+
+  createAuthorIfNecessary(authorDetails)
+
+  const url = getRedirectUrlWithToken(authorDetails)
   ctx.redirect(url)
 }

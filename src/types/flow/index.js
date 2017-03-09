@@ -1,5 +1,6 @@
 // @flow
 export type {
+  MutationDispatchResult,
   MutationParams,
 } from './apollo.types'
 

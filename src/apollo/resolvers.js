@@ -16,6 +16,7 @@ import type {
   Converter,
   ConverterWithFilter,
   ID,
+  MutationDispatchResult,
   MutationParams,
   PostWithID,
   SecretWithID,
@@ -77,7 +78,7 @@ export default {
     },
   },
   Mutation: {
-    dispatch(_: any, { action }: MutationParams, ctx: Context): any {
+    dispatch(_: any, { action }: MutationParams, ctx: Context): MutationDispatchResult {
       validate(ctx)(action)
       authenticate(ctx)(action)
 

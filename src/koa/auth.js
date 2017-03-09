@@ -32,8 +32,8 @@ export function redirectToGitHub(ctx: Context): void {
     redirect_uri: `http://${HOST}:${PORT}${GITHUB_CALLBACK}`,
   }
   const queryString = qs.stringify(query)
-
   const url = `https://github.com/login/oauth/authorize?${queryString}`
+
   ctx.redirect(url)
 }
 
@@ -59,7 +59,7 @@ const createAuthorIfNecessary = ({ authorId, name }: AuthorDetails): void => {
   }
 }
 
-const getRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): string => {
+const constructRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): string => {
   const token = jwt.sign(
     { id: authorId, name },
     JWT_SECRET,
@@ -85,6 +85,6 @@ export async function handleGitHubCallback(ctx: Context): Promise<void> {
 
   createAuthorIfNecessary(authorDetails)
 
-  const url = getRedirectUrlWithToken(authorDetails)
+  const url = constructRedirectUrlWithToken(authorDetails)
   ctx.redirect(url)
 }

@@ -6,6 +6,8 @@ This project is a proof-of-concept for combining the apollo graphql server with 
 
 ```bash
 npm install
+cp .env.example .env
+# Add your own env variables to .env
 ```
 
 ## Starting the server

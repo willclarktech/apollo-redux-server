@@ -4,7 +4,7 @@
   "description": "Combining apollo-server with redux on the backend",
   "main": "index.js",
   "scripts": {
-    "postinstall": "./bin/install-filebeat.sh",
+    "postinstall": "./bin/postinstall.sh",
     "start": "nodemon src/index.js --watch src --exec babel-node",
     "filebeat": "./filebeat/filebeat -c filebeat.yml -e",
     "lint": "eslint src",

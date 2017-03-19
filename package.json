@@ -9,6 +9,8 @@
     "filebeat": "./filebeat/filebeat -c filebeat.yml -e",
     "lint": "eslint src",
     "lint:fix": "npm run lint --fix",
+    "typecheck": "flow",
+    "checks": "npm run lint && npm run typecheck",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "willclarktech",

@@ -1,6 +1,8 @@
 /node_modules/
-npm-debug.log
 /filebeat/
+
+npm-debug.log
+*.swp
 
 .env
 /logs/

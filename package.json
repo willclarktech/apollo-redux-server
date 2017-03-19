@@ -1,6 +1,6 @@
 {
   "name": "apollo-redux-server",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Combining apollo-server with redux on the backend",
   "main": "index.js",
   "scripts": {

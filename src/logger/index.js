@@ -6,7 +6,7 @@ import type {
 import { getLogFileName } from './helpers'
 
 class Logger {
-  stream: stream$Writable & { path?: boolean }
+  stream: stream$Writable & { path?: string }
 
   constructor(): void {
     this.refreshStream()

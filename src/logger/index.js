@@ -25,7 +25,13 @@ class Logger {
 
   logAction(action: Action): boolean {
     this.refreshStream()
-    return this.stream.write(`${JSON.stringify(action)}\n`)
+    const actionToLog = {
+      ...action,
+      _meta: {
+        timestamp: new Date(),
+      },
+    }
+    return this.stream.write(`${JSON.stringify(actionToLog)}\n`)
   }
 }
 

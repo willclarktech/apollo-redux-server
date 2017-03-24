@@ -19,7 +19,7 @@ const {
 const GRAPHQL_OPTIONS = (context: Context) => ({
   context,
   schema,
-  debug: true,
+  debug: process.env.GRAPHQL_DEBUG,
 })
 
 const GRAPHIQL_OPTIONS = {

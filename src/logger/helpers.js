@@ -10,7 +10,7 @@ export const getLogFileName = (): string => {
   return `${LOG_PATH}actions_${today}.log`
 }
 
-const getActionsFromFile = (file: string) =>
+const getActionsFromFile = (file: string): Array<Action> =>
   fs.readFileSync(`${LOG_PATH}${file}`, 'utf-8')
     .split('\n')
     .filter(action => !!action)

@@ -3,8 +3,13 @@ import fs from 'fs'
 import crypto from 'crypto'
 import type {
   Action,
+  Log,
+  LogWithoutHash,
 } from '../types/flow'
-import { getLogFileName } from './helpers'
+import {
+  getLogFileName,
+  getMostRecentHash,
+} from './helpers'
 
 const getHashForAction = (action: Action): string =>
   crypto
@@ -18,7 +23,7 @@ class Logger {
 
   constructor(): void {
     this.refreshStream()
-    this.mostRecentHash = 'xxx'
+    this.mostRecentHash = getMostRecentHash()
   }
 
   refreshStream(): void {
@@ -32,7 +37,7 @@ class Logger {
     }
   }
 
-  populateActionWithMeta(action: Action): Object {
+  populateActionWithMeta(action: Action): LogWithoutHash {
     return {
       action,
       meta: {
@@ -47,7 +52,7 @@ class Logger {
 
     const actionWithMeta = this.populateActionWithMeta(action)
     const hash = getHashForAction(actionWithMeta)
-    const actionToLog = {
+    const actionToLog: Log = {
       ...actionWithMeta,
       hash,
     }

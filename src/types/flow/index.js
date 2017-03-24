@@ -21,6 +21,11 @@ export type {
 } from './helper.types'
 
 export type {
+  Log,
+  LogWithoutHash,
+} from './logger.types'
+
+export type {
   Action,
   AppState,
   CreateAuthorPrivateAction,

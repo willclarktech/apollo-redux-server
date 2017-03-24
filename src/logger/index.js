@@ -1,15 +1,24 @@
 // @flow
 import fs from 'fs'
+import crypto from 'crypto'
 import type {
   Action,
 } from '../types/flow'
 import { getLogFileName } from './helpers'
 
+const getHashForAction = (action: Action): string =>
+  crypto
+    .createHash('sha256')
+    .update(JSON.stringify(action))
+    .digest('hex')
+
 class Logger {
   stream: stream$Writable & { path?: string }
+  mostRecentHash: string
 
   constructor(): void {
     this.refreshStream()
+    this.mostRecentHash = 'xxx'
   }
 
   refreshStream(): void {
@@ -23,15 +32,29 @@ class Logger {
     }
   }
 
-  logAction(action: Action): boolean {
-    this.refreshStream()
-    const actionToLog = {
-      ...action,
-      _meta: {
+  populateActionWithMeta(action: Action): Object {
+    return {
+      action,
+      meta: {
         timestamp: new Date(),
+        previousHash: this.mostRecentHash,
       },
     }
-    return this.stream.write(`${JSON.stringify(actionToLog)}\n`)
+  }
+
+  logAction(action: Action): string {
+    this.refreshStream()
+
+    const actionWithMeta = this.populateActionWithMeta(action)
+    const hash = getHashForAction(actionWithMeta)
+    const actionToLog = {
+      ...actionWithMeta,
+      hash,
+    }
+
+    this.stream.write(`${JSON.stringify(actionToLog)}\n`)
+    this.mostRecentHash = hash
+    return hash
   }
 }
 

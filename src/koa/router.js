@@ -11,6 +11,7 @@ import {
 
 const {
   GRAPHQL: GRAPHQL_PATH,
+  GRAPHIQL: GRAPHIQL_PATH,
   GITHUB: GITHUB_PATH,
   GITHUB_CALLBACK: GITHUB_CALLBACK_PATH,
   LOGOUT: LOGOUT_PATH,
@@ -33,11 +34,11 @@ const logout = (ctx: Context) => {
   ctx.redirect(GRAPHQL_PATH)
 }
 
-router.post(GRAPHQL_PATH, graphqlKoa(GRAPHQL_OPTIONS))
-router.get(GRAPHQL_PATH, graphiqlKoa(GRAPHIQL_OPTIONS))
-
-router.get(GITHUB_PATH, redirectToGitHub)
-router.get(GITHUB_CALLBACK_PATH, handleGitHubCallback)
-router.get(LOGOUT_PATH, logout)
+router
+  .post(GRAPHQL_PATH, graphqlKoa(GRAPHQL_OPTIONS))
+  .get(GRAPHIQL_PATH, graphiqlKoa(GRAPHIQL_OPTIONS))
+  .get(GITHUB_PATH, redirectToGitHub)
+  .get(GITHUB_CALLBACK_PATH, handleGitHubCallback)
+  .get(LOGOUT_PATH, logout)
 
 export default router

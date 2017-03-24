@@ -5,7 +5,7 @@ const PathsRecord = ImmutableRecord({
   CLIENT: 'http://localhost:3001',
   GRAPHQL: '/graphql',
   GRAPHIQL: '/graphiql',
-  GITHUB: '/auth/github',
+  GITHUB_LOGIN: '/auth/github',
   GITHUB_CALLBACK: '/auth/github/callback',
 })
 

@@ -12,7 +12,7 @@ import {
 const {
   GRAPHQL: GRAPHQL_PATH,
   GRAPHIQL: GRAPHIQL_PATH,
-  GITHUB: GITHUB_PATH,
+  GITHUB_LOGIN: GITHUB_LOGIN_PATH,
   GITHUB_CALLBACK: GITHUB_CALLBACK_PATH,
 } = CONFIG.PATHS
 
@@ -31,7 +31,7 @@ const router = new Router()
 router
   .post(GRAPHQL_PATH, graphqlKoa(GRAPHQL_OPTIONS))
   .get(GRAPHIQL_PATH, graphiqlKoa(GRAPHIQL_OPTIONS))
-  .get(GITHUB_PATH, redirectToGitHub)
+  .get(GITHUB_LOGIN_PATH, redirectToGitHub)
   .get(GITHUB_CALLBACK_PATH, handleGitHubCallback)
 
 export default router

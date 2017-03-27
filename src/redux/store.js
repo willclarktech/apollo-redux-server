@@ -2,7 +2,7 @@
 import { createStore } from 'redux'
 import { Map as ImmutableMap } from 'immutable'
 import createReducer from './reducer'
-import { getActionsFromLogs } from '../logger/helpers'
+import { getLogs } from '../logger/helpers'
 import {
   makeNewRecord,
   AppStateRecord,
@@ -45,10 +45,11 @@ const INITIAL_STATE: AppState = new AppStateRecord({
   secrets: ImmutableMap(INITIAL_SECRETS.map(createTupleWithId)),
 })
 
-const ACTIONS: Array<Action> = getActionsFromLogs()
+const loggedActions: Array<Action> =
+  getLogs().map(log => log.action)
 
 const initialisedState: AppState =
-  ACTIONS.reduce(createReducer(), INITIAL_STATE)
+  loggedActions.reduce(createReducer(), INITIAL_STATE)
 
 const reducer: Reducer = createReducer(initialisedState)
 

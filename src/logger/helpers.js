@@ -2,7 +2,6 @@
 import fs from 'fs'
 import { flatten } from 'lodash'
 import type {
-  Action,
   Log,
 } from '../types/flow'
 
@@ -24,10 +23,9 @@ const getLogsFromFile = (file: string): Array<Log> =>
     .filter(action => !!action)
     .map(action => JSON.parse(action))
 
-export const getActionsFromLogs = (): Array<Action> => {
+export const getLogs = (): Array<Log> => {
   const logFiles = fs.readdirSync(LOG_PATH)
   return flatten(logFiles.map(getLogsFromFile))
-    .map(log => log.action)
 }
 
 export const getMostRecentHash = (): string => {

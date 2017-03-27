@@ -1,7 +1,9 @@
 // @flow
 import fs from 'fs'
+import crypto from 'crypto'
 import { flatten } from 'lodash'
 import type {
+  Action,
   Log,
 } from '../types/flow'
 
@@ -35,3 +37,9 @@ export const getMostRecentHash = (): string => {
   const lastAction = actions[actions.length - 1]
   return lastAction ? lastAction.hash : GENESIS_HASH
 }
+
+export const getHashForAction = (action: Action): string =>
+  crypto
+    .createHash('sha256')
+    .update(JSON.stringify(action))
+    .digest('hex')

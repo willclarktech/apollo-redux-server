@@ -1,21 +1,15 @@
 // @flow
 import fs from 'fs'
-import crypto from 'crypto'
 import type {
   Action,
   Log,
   LogWithoutHash,
 } from '../types/flow'
 import {
+  getHashForAction,
   getLogFileName,
   getMostRecentHash,
 } from './helpers'
-
-const getHashForAction = (action: Action): string =>
-  crypto
-    .createHash('sha256')
-    .update(JSON.stringify(action))
-    .digest('hex')
 
 class Logger {
   stream: stream$Writable & { path?: string }

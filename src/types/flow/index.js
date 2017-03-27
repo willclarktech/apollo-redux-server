@@ -22,6 +22,7 @@ export type {
 
 export type {
   Log,
+  LogAggregator,
   LogWithoutHash,
 } from './logger.types'
 

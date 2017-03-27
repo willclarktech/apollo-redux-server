@@ -11,3 +11,8 @@ export type LogWithoutHash = {|
 export type Log = LogWithoutHash & {|
   hash: string,
 |}
+
+export type LogAggregator = {|
+  previousHash: string,
+  validLogs: Array<Log>,
+|}

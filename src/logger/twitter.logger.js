@@ -14,7 +14,7 @@ class TwitterLogger {
   constructor(): void {
     const { GENESIS_HASH } = process.env
     if (typeof GENESIS_HASH !== 'string') {
-      throw new Error('GENESIS_HASH not set')
+      throw new Error('GENESIS_HASH not set in .env file')
     }
     this.genesisHash = GENESIS_HASH
     this.mostRecentHash = this.getMostRecentHash()

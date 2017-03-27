@@ -5,10 +5,7 @@ import type {
   Action,
   Log,
 } from '../types/flow'
-import {
-  getHashForAction,
-  populateActionWithMeta,
-} from './helpers'
+import { constructActionToLog } from './helpers'
 
 class LocalFileLogger {
   logPath: string
@@ -54,17 +51,13 @@ class LocalFileLogger {
     return lastAction ? lastAction.hash : this.genesisHash
   }
 
-  logAction(action: Action): string {
+  async logAction(action: Action): Promise<string> {
+    const actionToLog: Log = constructActionToLog(action)(this.mostRecentHash)
+
     this.refreshStream()
-
-    const actionWithMeta = populateActionWithMeta(action)(this.mostRecentHash)
-    const hash = getHashForAction(actionWithMeta)
-    const actionToLog: Log = {
-      ...actionWithMeta,
-      hash,
-    }
-
     this.stream.write(`${JSON.stringify(actionToLog)}\n`)
+
+    const { hash } = actionToLog
     this.mostRecentHash = hash
     return hash
   }

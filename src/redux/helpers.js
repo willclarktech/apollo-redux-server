@@ -1,5 +1,5 @@
 // @flow
-import { getLogs } from '../logger/helpers'
+import logger from '../logger'
 import type {
   LogAggregator,
   Log,
@@ -24,7 +24,7 @@ const initialLogAggregator: LogAggregator = {
 
 // eslint-disable-next-line import/prefer-default-export
 export const getLoggedActions = () => {
-  const logs = getLogs()
+  const logs = logger.getLogs()
   const validLogs = process.env.ENSURE_HASH_CONSISTENCY
     ? logs
       .reduce(ensureHashConsistency, initialLogAggregator)

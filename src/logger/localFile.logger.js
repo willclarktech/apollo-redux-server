@@ -1,50 +1,63 @@
 // @flow
 import fs from 'fs'
+import { flatten } from 'lodash'
 import type {
   Action,
   Log,
-  LogWithoutHash,
 } from '../types/flow'
 import {
   getHashForAction,
-  getLogFileName,
-  getMostRecentHash,
+  populateActionWithMeta,
 } from './helpers'
 
-class Logger {
+class LocalFileLogger {
+  logPath: string
   stream: stream$Writable & { path?: string }
+  genesisHash: string
   mostRecentHash: string
 
   constructor(): void {
+    this.logPath = './logs/'
+    const { GENESIS_HASH } = process.env
+    if (typeof GENESIS_HASH !== 'string') {
+      throw new Error('GENESIS_HASH not set')
+    }
+    this.genesisHash = GENESIS_HASH
+    this.mostRecentHash = this.getMostRecentHash()
+
     this.refreshStream()
-    this.mostRecentHash = getMostRecentHash()
   }
 
-  refreshStream(): void {
-    const fileName = getLogFileName()
-    const newStreamRequired = !this.stream || this.stream.path !== fileName
-    if (newStreamRequired) {
-      if (this.stream) {
-        this.stream.end()
-      }
-      this.stream = fs.createWriteStream(fileName, { flags: 'a' })
-    }
+  getLogFileName(): string {
+    const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+    return `${this.logPath}actions_${today}.log`
   }
 
-  populateActionWithMeta(action: Action): LogWithoutHash {
-    return {
-      action,
-      meta: {
-        timestamp: new Date(),
-        previousHash: this.mostRecentHash,
-      },
-    }
+  getLogs(): Array<Log> {
+    const logFiles = fs.readdirSync(this.logPath)
+    return flatten(logFiles.map(this.getLogsFromFile.bind(this)))
+  }
+
+  getLogsFromFile(file: string): Array<Log> {
+    return fs
+      .readFileSync(`${this.logPath}${file}`, 'utf-8')
+      .split('\n')
+      .filter(action => !!action)
+      .map(action => JSON.parse(action))
+  }
+
+  getMostRecentHash(): string {
+    const logFiles = fs.readdirSync(this.logPath)
+    const lastLogFile = logFiles[logFiles.length - 1]
+    const actions = this.getLogsFromFile(lastLogFile)
+    const lastAction = actions[actions.length - 1]
+    return lastAction ? lastAction.hash : this.genesisHash
   }
 
   logAction(action: Action): string {
     this.refreshStream()
 
-    const actionWithMeta = this.populateActionWithMeta(action)
+    const actionWithMeta = populateActionWithMeta(action)(this.mostRecentHash)
     const hash = getHashForAction(actionWithMeta)
     const actionToLog: Log = {
       ...actionWithMeta,
@@ -55,8 +68,17 @@ class Logger {
     this.mostRecentHash = hash
     return hash
   }
+
+  refreshStream(): void {
+    const fileName = this.getLogFileName()
+    const newStreamRequired = !this.stream || this.stream.path !== fileName
+    if (newStreamRequired) {
+      if (this.stream) {
+        this.stream.end()
+      }
+      this.stream = fs.createWriteStream(fileName, { flags: 'a' })
+    }
+  }
 }
 
-const logger = new Logger()
-
-export default logger
+export default LocalFileLogger

@@ -1,4 +1,7 @@
 // @flow
-import localFileLogger from './localFile.logger'
+import Logger from './localFile.logger'
+// import Logger from './twitter.logger'
 
-export default localFileLogger
+const logger = new Logger()
+
+export default logger

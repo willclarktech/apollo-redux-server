@@ -28,7 +28,7 @@ export const AppStateRecord = ImmutableRecord({
   [SECRETS]: ImmutableMap(),
 })
 
-type RecordClassType
+export type RecordClassType
   = AuthorRecord
   | PostRecord
   | SecretRecord

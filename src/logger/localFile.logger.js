@@ -30,7 +30,7 @@ class LocalFileLogger {
     return `${this.logPath}actions_${today}.log`
   }
 
-  getLogs(): Array<Log> {
+  async getLogs(): Promise<Array<Log>> {
     const logFiles = fs.readdirSync(this.logPath)
     return flatten(logFiles.map(this.getLogsFromFile.bind(this)))
   }

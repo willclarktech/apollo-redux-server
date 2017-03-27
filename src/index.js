@@ -1,3 +1,3 @@
 // @flow
 require('dotenv').config()
-require('./koa/server')
+require('./koa/server').default()

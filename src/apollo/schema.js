@@ -1,9 +1,13 @@
 // @flow
 import { makeExecutableSchema } from 'graphql-tools'
-import resolvers from './resolvers'
+import initialiseResolvers from './resolvers'
 import typeDefs from '../types/graphql'
 
-export default makeExecutableSchema({
+const defineSchema = resolvers => makeExecutableSchema({
   typeDefs,
   resolvers,
 })
+
+const initialiseSchema = () => initialiseResolvers().then(defineSchema)
+
+export default initialiseSchema

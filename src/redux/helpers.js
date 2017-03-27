@@ -16,15 +16,13 @@ const ensureHashConsistency = (aggregator: LogAggregator, log: Log): LogAggregat
     : aggregator
 }
 
-
 const initialLogAggregator: LogAggregator = {
   previousHash: process.env.GENESIS_HASH,
   validLogs: [],
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export const getLoggedActions = () => {
-  const logs = logger.getLogs()
+export const getLoggedActions = async () => {
+  const logs = await logger.getLogs()
   const validLogs = process.env.ENSURE_HASH_CONSISTENCY
     ? logs
       .reduce(ensureHashConsistency, initialLogAggregator)

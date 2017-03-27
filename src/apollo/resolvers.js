@@ -6,7 +6,7 @@ import {
   SECRETS,
 } from '../types/constants'
 import logger from '../logger'
-import store from '../redux/store'
+import initialiseStore from '../redux/store'
 import validate from '../redux/validator'
 import authenticate from './authenticator'
 import { convertMapIntoObjectWithId } from './helpers'
@@ -19,6 +19,7 @@ import type {
   DispatchResult,
   ID,
   PostWithID,
+  ReduxStore,
   SecretWithID,
 } from '../types/flow'
 
@@ -35,66 +36,72 @@ const convertToArrayWithFilter: ConverterWithFilter = filter => map =>
     .filter(filter)
     .map(convertMapIntoObjectWithId)
 
-const getAuthorById = (id: ID): AuthorWithID => {
-  const author = store
+const defineResolvers = (store: ReduxStore): Object => {
+  const getAuthorById = (id: ID): AuthorWithID => {
+    const author = store
     .getState()
     .get(AUTHORS)
     .get(id)
 
-  if (!author) {
-    throw new Error(`Couldn’t find author with id ${id}`)
+    if (!author) {
+      throw new Error(`Couldn’t find author with id ${id}`)
+    }
+
+    return convertMapIntoObjectWithId([id, author])
   }
+  return {
+    Query: {
+      posts(): Array<PostWithID> {
+        const posts = store
+          .getState()
+          .get(POSTS)
 
-  return convertMapIntoObjectWithId([id, author])
+        return convertToArray(posts)
+      },
+      secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
+        authenticate(ctx)
+        const { user } = ctx.state
+        const secrets = store
+          .getState()
+          .get(SECRETS)
+
+        return convertToArrayWithFilter(doesAuthorIdMatchUserId(user.id))(secrets)
+      },
+    },
+    Post: {
+      author({ authorId }: PostWithID): AuthorWithID {
+        return getAuthorById(authorId)
+      },
+    },
+    Secret: {
+      author({ authorId }: SecretWithID): AuthorWithID {
+        return getAuthorById(authorId)
+      },
+    },
+    Author: {
+      posts({ id }: AuthorWithID): Array<PostWithID> {
+        const posts = store
+          .getState()
+          .get(POSTS)
+
+        return convertToArrayWithFilter(doesAuthorIdMatchUserId(id))(posts)
+      },
+    },
+    Mutation: {
+      dispatch(_: any, { action }: DispatchParams, ctx: Context): DispatchResult {
+        validate(ctx)(action)
+        authenticate(ctx)(action)
+
+        logger.logAction(action)
+        store.dispatch(action)
+
+        return { success: true }
+      },
+    },
+  }
 }
 
-export default {
-  Query: {
-    posts(): Array<PostWithID> {
-      const posts = store
-        .getState()
-        .get(POSTS)
+const initialiseResolvers = () =>
+  initialiseStore().then(defineResolvers)
 
-      return convertToArray(posts)
-    },
-    secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
-      authenticate(ctx)
-      const { user } = ctx.state
-      const secrets = store
-        .getState()
-        .get(SECRETS)
-
-      return convertToArrayWithFilter(doesAuthorIdMatchUserId(user.id))(secrets)
-    },
-  },
-  Post: {
-    author({ authorId }: PostWithID): AuthorWithID {
-      return getAuthorById(authorId)
-    },
-  },
-  Secret: {
-    author({ authorId }: SecretWithID): AuthorWithID {
-      return getAuthorById(authorId)
-    },
-  },
-  Author: {
-    posts({ id }: AuthorWithID): Array<PostWithID> {
-      const posts = store
-        .getState()
-        .get(POSTS)
-
-      return convertToArrayWithFilter(doesAuthorIdMatchUserId(id))(posts)
-    },
-  },
-  Mutation: {
-    dispatch(_: any, { action }: DispatchParams, ctx: Context): DispatchResult {
-      validate(ctx)(action)
-      authenticate(ctx)(action)
-
-      logger.logAction(action)
-      store.dispatch(action)
-
-      return { success: true }
-    },
-  },
-}
+export default initialiseResolvers

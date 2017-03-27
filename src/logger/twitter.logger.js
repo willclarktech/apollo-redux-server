@@ -1,4 +1,5 @@
 // @flow
+import Client from 'twitter'
 import { constructActionToLog } from './helpers'
 import type {
   Action,
@@ -12,12 +13,25 @@ class TwitterLogger {
   client: TwitterClient
 
   constructor(): void {
-    const { GENESIS_HASH } = process.env
+    const {
+      GENESIS_HASH,
+      TWITTER_ACCESS_TOKEN_KEY,
+      TWITTER_ACCESS_TOKEN_SECRET,
+      TWITTER_CONSUMER_KEY,
+      TWITTER_CONSUMER_SECRET,
+    } = process.env
     if (typeof GENESIS_HASH !== 'string') {
       throw new Error('GENESIS_HASH not set in .env file')
     }
     this.genesisHash = GENESIS_HASH
     this.mostRecentHash = this.getMostRecentHash()
+
+    this.client = new Client({
+      access_token_key: TWITTER_ACCESS_TOKEN_KEY,
+      access_token_secret: TWITTER_ACCESS_TOKEN_SECRET,
+      consumer_key: TWITTER_CONSUMER_KEY,
+      consumer_secret: TWITTER_CONSUMER_SECRET,
+    })
   }
 
   getLogs(): Array<Log> {

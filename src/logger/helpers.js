@@ -22,7 +22,7 @@ const populateActionWithMeta =
     },
   })
 
-  // eslint-disable-next-line import/prefer-default-export
+// eslint-disable-next-line import/prefer-default-export
 export const constructActionToLog = (action: Action) => (previousHash: string): Log => {
   const actionWithMeta: LogWithoutHash = populateActionWithMeta(action)(previousHash)
   const hash: string = getHashForAction(actionWithMeta)

@@ -24,6 +24,7 @@ export type {
   Log,
   LogAggregator,
   LogWithoutHash,
+  TwitterClient,
 } from './logger.types'
 
 export type {

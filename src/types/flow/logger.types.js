@@ -16,3 +16,7 @@ export type LogAggregator = {|
   previousHash: string,
   validLogs: Array<Log>,
 |}
+
+export type TwitterClient = {
+  post: (path: string, params: {}) => Promise<string>,
+}

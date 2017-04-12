@@ -1,8 +1,9 @@
 /node_modules/
-/filebeat/
+filebeat/
 
 npm-debug.log
 *.swp
+tmp/
 
 .env
 /logs/

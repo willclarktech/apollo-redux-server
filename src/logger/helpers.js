@@ -9,7 +9,7 @@ import type {
 const getHashForAction = (action: Action): string =>
   crypto
     .createHash('sha256')
-    .update(JSON.stringify(action))
+    .update(JSON.stringify(action), 'utf8')
     .digest('hex')
 
 const populateActionWithMeta =

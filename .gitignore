@@ -4,7 +4,6 @@ filebeat/
 npm-debug.log
 *.swp
 tmp/
-media/
 
 .env
 /logs/

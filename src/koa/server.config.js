@@ -10,6 +10,7 @@ const PathsRecord = ImmutableRecord({
 })
 
 const ServerConfigRecord = ImmutableRecord({
+  FAVICON_LOCATION: './public/favicon.ico',
   HOST: 'localhost',
   PORT: 3000,
   PATHS: new PathsRecord(),

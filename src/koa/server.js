@@ -8,7 +8,7 @@ import jwt from 'koa-jwt'
 import CONFIG from './server.config'
 import initialiseRouter from './router'
 
-const { HOST, PORT } = CONFIG
+const { FAVICON_LOCATION, HOST, PORT } = CONFIG
 const { JWT_SECRET, MORGAN_LOG_LEVEL } = process.env
 
 const jwtOptions = {
@@ -20,7 +20,7 @@ const setupServer = router => {
   const app = new Koa()
 
   app.use(morgan(MORGAN_LOG_LEVEL))
-  app.use(favicon('./media/favicon.ico'))
+  app.use(favicon(FAVICON_LOCATION))
   app.use(cors())
   app.use(bodyParser())
   app.use(jwt(jwtOptions))

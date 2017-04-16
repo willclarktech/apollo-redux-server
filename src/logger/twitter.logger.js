@@ -19,12 +19,17 @@ class TwitterLogger {
       TWITTER_ACCESS_TOKEN_SECRET,
       TWITTER_CONSUMER_KEY,
       TWITTER_CONSUMER_SECRET,
+      TWITTER_BASE_IMAGE_LOCATION,
     } = process.env
     if (typeof GENESIS_HASH !== 'string') {
       throw new Error('GENESIS_HASH not set in .env file')
     }
+    if (typeof TWITTER_BASE_IMAGE_LOCATION !== 'string') {
+      throw new Error('TWITTER_BASE_IMAGE_LOCATION not set in .env file')
+    }
     this.genesisHash = GENESIS_HASH
     this.mostRecentHash = this.getMostRecentHash()
+    this.baseImage = fs.readFileSync(TWITTER_BASE_IMAGE_LOCATION)
 
     this.client = new Client({
       access_token_key: TWITTER_ACCESS_TOKEN_KEY,

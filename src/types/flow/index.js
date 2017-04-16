@@ -25,6 +25,9 @@ export type {
   LogAggregator,
   LogWithoutHash,
   TwitterClient,
+  TwitterGetStatusesResponse,
+  TwitterPostStatusResponse,
+  TwitterUploadMediaResponse,
 } from './logger.types'
 
 export type {

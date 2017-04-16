@@ -20,3 +20,19 @@ export type LogAggregator = {|
 export type TwitterClient = {
   post: (path: string, params: {}) => Promise<string>,
 }
+
+export type TwitterGetStatusesResponse = {
+  extended_entities: {
+    media: Array<{
+      ext_alt_text: string,
+    }>,
+  },
+}
+
+export type TwitterPostStatusResponse = {
+  created_at: string,
+}
+
+export type TwitterUploadMediaResponse = {
+  media_id_string: string,
+}

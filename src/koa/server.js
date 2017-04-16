@@ -1,6 +1,7 @@
 // @flow
 import Koa from 'koa'
 import morgan from 'koa-morgan'
+import favicon from 'koa-favicon'
 import cors from 'kcors'
 import bodyParser from 'koa-bodyparser'
 import jwt from 'koa-jwt'
@@ -19,6 +20,7 @@ const setupServer = router => {
   const app = new Koa()
 
   app.use(morgan(MORGAN_LOG_LEVEL))
+  app.use(favicon('./media/favicon.ico'))
   app.use(cors())
   app.use(bodyParser())
   app.use(jwt(jwtOptions))

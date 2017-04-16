@@ -1,5 +1,6 @@
 // @flow
 import crypto from 'crypto'
+import _get from 'lodash/get'
 import type {
   Action,
   Log,
@@ -22,7 +23,6 @@ const populateActionWithMeta =
     },
   })
 
-// eslint-disable-next-line import/prefer-default-export
 export const constructActionToLog = (action: Action) => (previousHash: string): Log => {
   const actionWithMeta: LogWithoutHash = populateActionWithMeta(action)(previousHash)
   const hash: string = getHashForAction(actionWithMeta)
@@ -31,3 +31,15 @@ export const constructActionToLog = (action: Action) => (previousHash: string): 
     hash,
   }
 }
+
+export const ensureExternalApiResponseShape =
+  (path: string | Array<string>) =>
+  (response: {} | Array<any>) => {
+    if (!_get(response, path, null)) {
+      const pathString = typeof path === 'string'
+        ? path
+        : path.join('.')
+      throw new Error(`External API response falsy at path: ${pathString}`)
+    }
+    return response
+  }

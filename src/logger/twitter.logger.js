@@ -2,7 +2,10 @@
 import fs from 'fs'
 import Client from 'twitter'
 import _get from 'lodash/get'
-import { constructActionToLog } from './helpers'
+import {
+  constructActionToLog,
+  ensureExternalApiResponseShape,
+} from './helpers'
 import type {
   Action,
   Log,
@@ -11,16 +14,6 @@ import type {
   TwitterPostStatusResponse,
   TwitterUploadMediaResponse,
 } from '../types/flow'
-
-const ensureExternalApiResponseShape = (path: string | Array<string>) => response => {
-  if (!_get(response, path, null)) {
-    const pathString = typeof path === 'string'
-      ? path
-      : path.join('.')
-    throw new Error(`External API response falsy at path: ${pathString}`)
-  }
-  return response
-}
 
 class TwitterLogger {
   genesisHash: string

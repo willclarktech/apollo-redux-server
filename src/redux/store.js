@@ -11,15 +11,15 @@ import type {
   ReduxStore,
 } from '../types/flow'
 
-const initialiseStore = async (): Promise<ReduxStore> => {
+const initializeStore = async (): Promise<ReduxStore> => {
   const loggedActions: Array<Action> = await getLoggedActions()
 
-  const initialisedState: AppState =
+  const initializedState: AppState =
     loggedActions.reduce(createReducer(), INITIAL_STATE)
 
-  const reducer: Reducer = createReducer(initialisedState)
+  const reducer: Reducer = createReducer(initializedState)
   return createStore(reducer)
 }
 
-const store = initialiseStore()
-export default store
+const storePromise = initializeStore()
+export default storePromise

@@ -6,7 +6,7 @@ import cors from 'kcors'
 import bodyParser from 'koa-bodyparser'
 import jwt from 'koa-jwt'
 import CONFIG from './server.config'
-import initialiseRouter from './router'
+import initializeRouter from './router'
 
 const { FAVICON_LOCATION, HOST, PORT } = CONFIG
 const { JWT_SECRET, MORGAN_LOG_LEVEL } = process.env
@@ -16,7 +16,7 @@ const jwtOptions = {
   passthrough: true,
 }
 
-const setupServer = router => {
+const initializeServer = router => {
   const app = new Koa()
 
   app.use(morgan(MORGAN_LOG_LEVEL))
@@ -32,6 +32,6 @@ const setupServer = router => {
   console.info(`🏃🏃🏃 Server is running on ${HOST}:${PORT}`)
 }
 
-const run = () => initialiseRouter().then(setupServer)
+const run = () => initializeRouter().then(initializeServer)
 
 export default run

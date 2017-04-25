@@ -2,9 +2,9 @@
 import type { Context } from 'koa'
 import Router from 'koa-router'
 import { graphqlKoa, graphiqlKoa } from 'graphql-server-koa'
-import initialiseSchema from '../apollo/schema'
+import initializeSchema from '../apollo/schema'
 import CONFIG from './server.config'
-import initialiseAuth from './auth'
+import initializeAuth from './auth'
 
 const {
   GRAPHQL: GRAPHQL_PATH,
@@ -27,7 +27,7 @@ const setupRouter = async schema => {
   const {
     handleGitHubCallback,
     redirectToGitHub,
-  } = await initialiseAuth()
+  } = await initializeAuth()
 
   return new Router()
     .post(GRAPHQL_PATH, graphqlKoa(GRAPHQL_OPTIONS))
@@ -36,8 +36,8 @@ const setupRouter = async schema => {
     .get(GITHUB_CALLBACK_PATH, handleGitHubCallback)
 }
 
-const initialiseRouter = () =>
-  initialiseSchema()
+const initializeRouter = () =>
+  initializeSchema()
     .then(setupRouter)
 
-export default initialiseRouter
+export default initializeRouter

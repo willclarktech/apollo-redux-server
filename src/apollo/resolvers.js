@@ -100,8 +100,8 @@ const defineResolvers = (store: ReduxStore): Object => {
   }
 }
 
-const initialiseResolvers = () =>
+const initializeResolvers = () =>
   storePromise
     .then(defineResolvers)
 
-export default initialiseResolvers
+export default initializeResolvers

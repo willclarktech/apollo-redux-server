@@ -73,7 +73,7 @@ With isomorphic redux, you can define your actions centrally for both client and
 
 That’s where the logging comes in. Try applying a few mutations, then stop the server and restart it. Your app should be right back where it left off.
 
-Every action that comes in is logged to an append-only store in JSON format. To return the app state to a given point in its history you only need to initialise a new redux store and run through all the actions up until the point you require:
+Every action that comes in is logged to an append-only store in JSON format. To return the app state to a given point in its history you only need to initialize a new redux store and run through all the actions up until the point you require:
 
 ```js
 // from src/redux/reducer.js
@@ -96,10 +96,10 @@ export default (initialState: ?AppState) => (
 // from src/redux/store.js
 const ACTIONS: Array<Action> = getActionsFromLogs()
 
-const initialisedState: AppState =
+const initializedState: AppState =
   ACTIONS.reduce(createReducer(), INITIAL_STATE)
 
-const reducer: Reducer = createReducer(initialisedState)
+const reducer: Reducer = createReducer(initializedState)
 
 const store: ReduxStore = createStore(reducer)
 

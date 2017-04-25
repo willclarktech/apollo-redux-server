@@ -103,8 +103,8 @@ const defineAuthFunctions = (store: ReduxStore): Object => ({
   handleGitHubCallback: createGitHubCallbackHandler(store),
 })
 
-const initialiseAuth = () =>
+const initializeAuth = () =>
   storePromise
     .then(defineAuthFunctions)
 
-export default initialiseAuth
+export default initializeAuth

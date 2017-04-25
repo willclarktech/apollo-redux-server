@@ -57,7 +57,7 @@ class TwitterLogger {
     return this.mostRecentHash
   }
 
-  async getLogs(): Promise<Array<Log>> {
+  getLogs(): Promise<Array<Log>> {
     const getAltTextFromTweetMedia = tweet =>
       _get(tweet, ['extended_entities', 'media', 0, 'ext_alt_text'], null)
     const getJSONLogs = (altText: ?string) => {
@@ -71,15 +71,11 @@ class TwitterLogger {
       }
     }
 
-    const tweets = await this
+    return this
       .getTweets()
-      .catch(() => console.error('Could not get logs from Twitter') || [])
-    const logs = tweets
-      .map(getAltTextFromTweetMedia)
-      .map(getJSONLogs)
-      .filter(Boolean)
-
-    return logs
+      .then(tweets => tweets.map(getAltTextFromTweetMedia))
+      .then(altTexts => altTexts.map(getJSONLogs))
+      .then(logs => logs.filter(Boolean))
   }
 
   getTweets(): Promise<TwitterGetStatusesResponse> {

@@ -17,23 +17,24 @@ const ensureHashConsistency = (aggregator: LogAggregator, log: Log): LogAggregat
 }
 
 const getInitialLogAggregator = (): LogAggregator => {
-  if (!process.env.GENESIS_HASH) throw new Error('Genesis hash not set in .env file.')
+  if (!process.env.GENESIS_HASH) {
+    throw new Error('Genesis hash not set in environment.')
+  }
   return {
     previousHash: process.env.GENESIS_HASH,
     validLogs: [],
   }
 }
 
-export const getLoggedActions = async () => {
-  const logs = await logger.getLogs()
-  const validLogs = process.env.ENSURE_HASH_CONSISTENCY
-    ? logs
-      .reduce(ensureHashConsistency, getInitialLogAggregator())
-      .validLogs
-    : logs
-
-  return validLogs
-    .map(log => log.action)
-}
+export const getLoggedActions = () =>
+  logger
+    .getLogs()
+    .then(logs => process.env.ENSURE_HASH_CONSISTENCY
+      ? logs
+        .reduce(ensureHashConsistency, getInitialLogAggregator())
+        .validLogs
+      : logs,
+    )
+    .then(logs => logs.map(log => log.action))
 
 export const createTupleWithId = (v: any, i: number) => [(i + 1).toString(), v]

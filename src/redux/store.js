@@ -13,6 +13,11 @@ import type {
 
 const initializeStore = async (): Promise<ReduxStore> => {
   const loggedActions: Array<Action> = await getLoggedActions()
+    .catch(() => console.error('Failed to get logged actions.')
+      || process.env.HANDLE_INACCESSIBLE_LOGS_GRACEFULLY
+        ? []
+        : process.exit(1),
+    )
 
   const initializedState: AppState =
     loggedActions.reduce(createReducer(), INITIAL_STATE)

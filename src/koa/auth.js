@@ -45,10 +45,10 @@ type AuthorDetails = {
   name: string,
 }
 
-const createAuthorIfNecessary = (store: ReduxStore) => ({
+const createAuthorIfNecessary = (store: ReduxStore) => async ({
   authorId,
   name,
-}: AuthorDetails): void => {
+}: AuthorDetails): Promise<?Object> => {
   const { authors } = store.getState()
   const author = authors.get(authorId)
 
@@ -58,9 +58,11 @@ const createAuthorIfNecessary = (store: ReduxStore) => ({
       authorId,
       name,
     }
-    logger.logAction(action)
-    store.dispatch(action)
+    return logger
+      .logAction(action)
+      .then(() => store.dispatch(action))
   }
+  return null
 }
 
 const constructRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): string => {
@@ -91,10 +93,12 @@ async function handleGitHubCallback(ctx: Context): Promise<void> {
   const authorId = `${id}`
   const authorDetails = { authorId, name }
 
-  createAuthorIfNecessary(store)(authorDetails)
-
-  const url = constructRedirectUrlWithToken(authorDetails)
-  ctx.redirect(url)
+  return createAuthorIfNecessary(store)(authorDetails)
+    .then(() => {
+      const url = constructRedirectUrlWithToken(authorDetails)
+      ctx.redirect(url)
+    })
+    .catch(() => ctx.throw(503, 'Author could not be created.'))
 }
 
 const defineAuthFunctions = (store: ReduxStore): AuthHandlers => ({

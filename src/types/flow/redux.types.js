@@ -1,9 +1,5 @@
 // @flow
 import type {
-  Map as ImmutableMap,
-  Record as ImmutableRecord,
-} from 'immutable'
-import type {
   Author,
   Post,
   Secret,
@@ -11,12 +7,12 @@ import type {
 import type { ID } from './helper.types'
 
 export type AppStateObject = {
-  authors: ImmutableMap<ID, Author>,
-  posts: ImmutableMap<ID, Post>,
-  secrets: ImmutableMap<ID, Secret>,
+  authors: Map<ID, Author>,
+  posts: Map<ID, Post>,
+  secrets: Map<ID, Secret>,
 }
 
-export type AppState = ImmutableRecord<AppStateObject>
+export type AppState = AppStateObject
 
 export type UpvotePostPublicAction = {
   type: 'UPVOTE_POST',

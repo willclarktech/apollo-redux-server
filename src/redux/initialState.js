@@ -1,41 +1,33 @@
 // @flow
-import { Map as ImmutableMap } from 'immutable'
 import { createTupleWithId } from './helpers'
-import {
-  makeNewRecord,
-  AppStateRecord,
-  AuthorRecord,
-  PostRecord,
-  SecretRecord,
-} from '../types/immutable'
-
 import type {
   AppState,
   Author,
+  ID,
   Post,
   Secret,
 } from '../types/flow'
 
-const INITIAL_AUTHORS: Array<Author> = [
+const authors: Map<ID, Author> = new Map([
   { name: 'Tom Coleman' },
   { name: 'Sashko Stubailo' },
-].map(makeNewRecord(AuthorRecord))
+].map(createTupleWithId))
 
-const INITIAL_POSTS: Array<Post> = [
+const posts: Map<ID, Post> = new Map([
   { authorId: '1', title: 'Introduction to GraphQL', votes: 2 },
   { authorId: '2', title: 'GraphQL Rocks', votes: 3 },
   { authorId: '2', title: 'Advanced GraphQL', votes: 1 },
-].map(makeNewRecord(PostRecord))
+].map(createTupleWithId))
 
-const INITIAL_SECRETS: Array<Secret> = [
+const secrets: Map<ID, Secret> = new Map([
   { authorId: '11036220', content: 'This is a secret!' },
   { authorId: '11036221', content: 'This is someone else’s secret' },
-].map(makeNewRecord(SecretRecord))
+].map(createTupleWithId))
 
-const INITIAL_STATE: AppState = new AppStateRecord({
-  authors: ImmutableMap(INITIAL_AUTHORS.map(createTupleWithId)),
-  posts: ImmutableMap(INITIAL_POSTS.map(createTupleWithId)),
-  secrets: ImmutableMap(INITIAL_SECRETS.map(createTupleWithId)),
-})
+const initialState: AppState = {
+  authors,
+  posts,
+  secrets,
+}
 
-export default INITIAL_STATE
+export default initialState

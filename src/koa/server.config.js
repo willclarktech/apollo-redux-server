@@ -1,19 +1,22 @@
 // @flow
-import { Record as ImmutableRecord } from 'immutable'
+import type {
+  Config,
+  Paths,
+} from '../types/flow'
 
-const PathsRecord = ImmutableRecord({
+const PATHS: Paths = {
   CLIENT: 'http://localhost:3001',
   GRAPHQL: '/graphql',
   GRAPHIQL: '/graphiql',
   GITHUB_LOGIN: '/auth/github',
   GITHUB_CALLBACK: '/auth/github/callback',
-})
+}
 
-const ServerConfigRecord = ImmutableRecord({
+const CONFIG: Config = {
   FAVICON_LOCATION: './public/favicon.ico',
   HOST: 'localhost',
   PORT: 3000,
-  PATHS: new PathsRecord(),
-})
+  PATHS,
+}
 
-export default new ServerConfigRecord()
+export default CONFIG

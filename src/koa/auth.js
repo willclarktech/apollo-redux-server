@@ -7,7 +7,6 @@ import type {
   CreateAuthorPrivateAction,
   ReduxStore,
 } from '../types/flow'
-import { AUTHORS } from '../types/constants'
 import logger from '../logger'
 import storePromise from '../redux/store'
 import CONFIG from './server.config'
@@ -50,10 +49,8 @@ const createAuthorIfNecessary = (store: ReduxStore) => ({
   authorId,
   name,
 }: AuthorDetails): void => {
-  const author = store
-    .getState()
-    .get(AUTHORS)
-    .get(authorId)
+  const { authors } = store.getState()
+  const author = authors.get(authorId)
 
   if (!author) {
     const action: CreateAuthorPrivateAction = {
@@ -82,6 +79,7 @@ const constructRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): strin
 const createGitHubCallbackHandler = (store: ReduxStore) =>
 async function handleGitHubCallback(ctx: Context): Promise<void> {
   const { code } = ctx.query
+  if (!code) throw new Error('No code in context query.')
   const { data: {
     access_token,
   } } = await getGitHubAccessToken(code)

@@ -7,6 +7,7 @@ export type {
 export type {
   Author,
   AuthorWithID,
+  DomainObject,
   Post,
   PostWithID,
   Secret,
@@ -22,7 +23,9 @@ export type {
 
 export type {
   AuthHandlers,
+  Config,
   Context,
+  Paths,
 } from './koa.types'
 
 export type {

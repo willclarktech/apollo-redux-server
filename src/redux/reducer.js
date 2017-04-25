@@ -1,53 +1,56 @@
 // @flow
-import {
-  AuthorRecord,
-  PostRecord,
-} from '../types/immutable'
 import type {
   Action,
   AppState,
+  Author,
   CreateAuthorPrivateAction,
   CreatePostPublicAction,
   Post,
   UpvotePostPublicAction,
 } from '../types/flow'
-import {
-  AUTHORS,
-  POSTS,
-  VOTES,
-} from '../types/constants'
 
 const upvotePost = (state: AppState) => (action: UpvotePostPublicAction): AppState => {
   const { postId } = action
-  const posts = state.get(POSTS)
-  const oldPost = posts.get(postId)
-  if (!oldPost) throw new Error(`Couldn’t find post with id ${postId}.`)
-  const oldVotes = oldPost.get(VOTES)
-
-  const newPost = oldPost.set(VOTES, oldVotes + 1)
-  const newPosts = posts.set(postId, newPost)
-  return state.set(POSTS, newPosts)
+  const { posts } = state
+  const post = posts.get(postId)
+  if (!post) throw new Error(`Couldn’t find post with id ${postId}.`)
+  const { votes } = post
+  const newPosts = posts.set(postId, {
+    ...post,
+    votes: votes + 1,
+  })
+  return {
+    ...state,
+    posts: newPosts,
+  }
 }
 
 const createPost = (state: AppState) => (action: CreatePostPublicAction): AppState => {
   const { authorId, title } = action
-  const posts = state.get(POSTS)
+  const { posts } = state
   const id = `${posts.size + 1}`
-  const newPost: Post = PostRecord({
+  const newPost: Post = {
     authorId,
     title,
-  })
+    votes: 0,
+  }
   const newPosts = posts.set(id, newPost)
-  return state.set(POSTS, newPosts)
+  return {
+    ...state,
+    posts: newPosts,
+  }
 }
 
 const createAuthor = (state: AppState) => (action: CreateAuthorPrivateAction): AppState => {
-  const authors = state.get(AUTHORS)
+  const { authors } = state
   const { authorId, name } = action
   const id = authorId ? authorId : `${authors.size + 1}`
-  const newAuthor = AuthorRecord({ name })
+  const newAuthor: Author = { name }
   const newAuthors = authors.set(id, newAuthor)
-  return state.set(AUTHORS, newAuthors)
+  return {
+    ...state,
+    authors: newAuthors,
+  }
 }
 
 export default (initialState: ?AppState) => (

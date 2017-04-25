@@ -1,9 +1,4 @@
 // @flow
-import {
-  AUTHORS,
-  POSTS,
-  SECRETS,
-} from '../types/constants'
 import logger from '../logger'
 import storePromise from '../redux/store'
 import validate from '../redux/validator'
@@ -43,10 +38,8 @@ const convertToArrayWithFilter: ConverterWithFilter = filter => map =>
 
 const defineResolvers = (store: ReduxStore): Resolvers => {
   const getAuthorById = (id: ID): AuthorWithID => {
-    const author = store
-    .getState()
-    .get(AUTHORS)
-    .get(id)
+    const { authors } = store.getState()
+    const author = authors.get(id)
 
     if (!author) {
       throw new Error(`Couldn’t find author with id ${id}.`)
@@ -57,18 +50,14 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
   return {
     Query: {
       posts(): Array<PostWithID> {
-        const posts = store
-          .getState()
-          .get(POSTS)
-
+        const { posts } = store.getState()
         return convertToArray(posts)
       },
       secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
         authenticate(ctx)
         const { user } = ctx.state
-        const secrets = store
-          .getState()
-          .get(SECRETS)
+        if (!user) throw new Error('No user in context state.')
+        const { secrets } = store.getState()
 
         return convertToArrayWithFilter(doesAuthorIdMatchUserId(user.id))(secrets)
       },
@@ -85,10 +74,7 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
     },
     Author: {
       posts({ id }: AuthorWithID): Array<PostWithID> {
-        const posts = store
-          .getState()
-          .get(POSTS)
-
+        const { posts } = store.getState()
         return convertToArrayWithFilter(doesAuthorIdMatchUserId(id))(posts)
       },
     },

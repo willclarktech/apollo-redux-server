@@ -1,8 +1,11 @@
 // @flow
-import type { RecordClassType } from '../types/immutable'
+import type {
+  DomainObject,
+  ID,
+} from '../types/flow'
 
 // eslint-disable-next-line import/prefer-default-export
-export const convertMapIntoObjectWithId = ([id, v]: [string, RecordClassType]) => ({
-  ...v.toObject(),
+export const convertMapIntoObjectWithId = ([id, value]: [ID, DomainObject]) => ({
+  ...value,
   id,
 })

@@ -1,26 +1,26 @@
 // @flow
-import type { Record as ImmutableRecord } from 'immutable'
 import type { ID, WithID } from './helper.types'
 
-export type AuthorObject = {
+export type Author = {
   name: string,
 }
 
-export type PostObject = {
+export type Post = {
   authorId: ID,
   title: string,
   votes: number,
 }
 
-export type SecretObject = {
+export type Secret = {
   authorId: ID,
   content: string,
 }
 
-export type Author = ImmutableRecord<AuthorObject>
-export type Post = ImmutableRecord<PostObject>
-export type Secret = ImmutableRecord<SecretObject>
+export type DomainObject
+  = Author
+  | Post
+  | Secret
 
-export type AuthorWithID = WithID<AuthorObject>
-export type PostWithID = WithID<PostObject>
-export type SecretWithID = WithID<SecretObject>
+export type AuthorWithID = WithID<Author>
+export type PostWithID = WithID<Post>
+export type SecretWithID = WithID<Secret>

@@ -1,6 +1,5 @@
 // @flow
-import type { Context } from 'koa'
-import type { Action } from '../types/flow'
+import type { Action, Context } from '../types/flow'
 
 const validator = (ctx: Context) => (action: Action): void => {
   switch (action.type) {

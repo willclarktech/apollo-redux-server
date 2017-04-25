@@ -7,7 +7,7 @@ import type {
   LogWithoutHash,
 } from '../types/flow'
 
-const getHashForAction = (action: Action): string =>
+const getHashForLog = (action: LogWithoutHash): string =>
   crypto
     .createHash('sha256')
     .update(JSON.stringify(action), 'utf8')
@@ -24,17 +24,17 @@ const populateActionWithMeta =
   })
 
 export const constructActionToLog = (action: Action) => (previousHash: string): Log => {
-  const actionWithMeta: LogWithoutHash = populateActionWithMeta(action)(previousHash)
-  const hash: string = getHashForAction(actionWithMeta)
+  const logWithoutHash: LogWithoutHash = populateActionWithMeta(action)(previousHash)
+  const hash: string = getHashForLog(logWithoutHash)
   return {
-    ...actionWithMeta,
+    ...logWithoutHash,
     hash,
   }
 }
 
 export const ensureExternalApiResponseShape =
   (path: string | Array<string>) =>
-  (response: {} | Array<any>) => {
+  <R>(response: R): R => {
     if (!_get(response, path, null)) {
       const pathString = typeof path === 'string'
         ? path

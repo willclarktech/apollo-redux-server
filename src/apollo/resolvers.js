@@ -1,5 +1,4 @@
 // @flow
-import type { Context } from 'koa'
 import {
   AUTHORS,
   POSTS,
@@ -13,6 +12,7 @@ import { convertMapIntoObjectWithId } from './helpers'
 
 import type {
   AuthorWithID,
+  Context,
   Converter,
   ConverterWithFilter,
   DispatchParams,
@@ -22,6 +22,11 @@ import type {
   ReduxStore,
   SecretWithID,
 } from '../types/flow'
+
+type Resolvers = {
+  Query: {},
+  Mutation: {},
+}
 
 const doesAuthorIdMatchUserId = (userId: ID) =>
   ([/* key */, { authorId }: { authorId: ID }]): boolean =>
@@ -36,7 +41,7 @@ const convertToArrayWithFilter: ConverterWithFilter = filter => map =>
     .filter(filter)
     .map(convertMapIntoObjectWithId)
 
-const defineResolvers = (store: ReduxStore): Object => {
+const defineResolvers = (store: ReduxStore): Resolvers => {
   const getAuthorById = (id: ID): AuthorWithID => {
     const author = store
     .getState()
@@ -100,7 +105,7 @@ const defineResolvers = (store: ReduxStore): Object => {
   }
 }
 
-const initializeResolvers = () =>
+const initializeResolvers = (): Promise<Resolvers> =>
   storePromise
     .then(defineResolvers)
 

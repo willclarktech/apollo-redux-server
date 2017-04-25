@@ -1,6 +1,5 @@
 // @flow
-import type { Context } from 'koa'
-import type { ID, Action } from '../types/flow'
+import type { Action, Context, ID } from '../types/flow'
 
 const assertIsAuthenticated = (ctx: Context) => ctx.assert(
   !!ctx.state.user,
@@ -9,7 +8,7 @@ const assertIsAuthenticated = (ctx: Context) => ctx.assert(
 )
 
 const assertAuthorIsUser = (authorId: ID) => (ctx: Context) => ctx.assert(
-  authorId === ctx.state.user.id,
+  ctx.state.user && authorId === ctx.state.user.id,
   401,
   'You cannot create posts for this author',
 )

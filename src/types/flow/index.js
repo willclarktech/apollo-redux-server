@@ -21,6 +21,11 @@ export type {
 } from './helper.types'
 
 export type {
+  AuthHandlers,
+  Context,
+} from './koa.types'
+
+export type {
   Log,
   LogAggregator,
   LogWithoutHash,

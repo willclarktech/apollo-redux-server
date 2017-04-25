@@ -1,3 +1,4 @@
+// @flow
 import client from 'axios'
 
 client.defaults.headers.common.Accept = 'application/json'

@@ -16,16 +16,19 @@ const ensureHashConsistency = (aggregator: LogAggregator, log: Log): LogAggregat
     : aggregator
 }
 
-const initialLogAggregator: LogAggregator = {
-  previousHash: process.env.GENESIS_HASH,
-  validLogs: [],
+const getInitialLogAggregator = (): LogAggregator => {
+  if (!process.env.GENESIS_HASH) throw new Error('Genesis hash not set in .env file.')
+  return {
+    previousHash: process.env.GENESIS_HASH,
+    validLogs: [],
+  }
 }
 
 export const getLoggedActions = async () => {
   const logs = await logger.getLogs()
   const validLogs = process.env.ENSURE_HASH_CONSISTENCY
     ? logs
-      .reduce(ensureHashConsistency, initialLogAggregator)
+      .reduce(ensureHashConsistency, getInitialLogAggregator())
       .validLogs
     : logs
 

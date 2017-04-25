@@ -1,8 +1,9 @@
 // @flow
-import type { Context } from 'koa'
 import qs from 'qs'
 import jwt from 'jsonwebtoken'
 import type {
+  AuthHandlers,
+  Context,
   CreateAuthorPrivateAction,
   ReduxStore,
 } from '../types/flow'
@@ -78,7 +79,7 @@ const constructRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): strin
   return `${CLIENT}?${queryString}`
 }
 
-const createGitHubCallbackHandler = store =>
+const createGitHubCallbackHandler = (store: ReduxStore) =>
 async function handleGitHubCallback(ctx: Context): Promise<void> {
   const { code } = ctx.query
   const { data: {
@@ -98,12 +99,12 @@ async function handleGitHubCallback(ctx: Context): Promise<void> {
   ctx.redirect(url)
 }
 
-const defineAuthFunctions = (store: ReduxStore): Object => ({
+const defineAuthFunctions = (store: ReduxStore): AuthHandlers => ({
   redirectToGitHub,
   handleGitHubCallback: createGitHubCallbackHandler(store),
 })
 
-const initializeAuth = () =>
+const initializeAuth = (): Promise<AuthHandlers> =>
   storePromise
     .then(defineAuthFunctions)
 

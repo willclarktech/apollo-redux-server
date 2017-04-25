@@ -1,33 +1,30 @@
-import type Action from './redux.types'
+// @flow
+import type { Action } from './redux.types'
 
-export type LogWithoutHash = {|
+export type LogWithoutHash = {
   action: Action,
   meta: {
-    timestamp: date,
+    timestamp: Date,
     previousHash: string,
   },
-|}
+}
 
-export type Log = LogWithoutHash & {|
+export type Log = LogWithoutHash & {
   hash: string,
-|}
+}
 
 export type LogAggregator = {|
   previousHash: string,
   validLogs: Array<Log>,
 |}
 
-export type TwitterClient = {
-  post: (path: string, params: {}) => Promise<string>,
-}
-
-export type TwitterGetStatusesResponse = {
+export type TwitterGetStatusesResponse = Array<{
   extended_entities: {
     media: Array<{
       ext_alt_text: string,
     }>,
   },
-}
+}>
 
 export type TwitterPostStatusResponse = {
   created_at: string,
@@ -35,4 +32,25 @@ export type TwitterPostStatusResponse = {
 
 export type TwitterUploadMediaResponse = {
   media_id_string: string,
+}
+
+type TwitterGetResponse
+  = TwitterGetStatusesResponse
+
+type TwitterPostResponse
+  = TwitterPostStatusResponse
+  | TwitterUploadMediaResponse
+
+type TwitterResponse
+  = TwitterGetResponse
+  | TwitterPostResponse
+
+export type TwitterClient = {
+  get: (path: string, params: {}) => Promise<TwitterGetResponse>,
+  post: (path: string, params: {}) => Promise<TwitterPostResponse>,
+  request: (path: string, config: {}, callback: Function) => Promise<TwitterResponse>,
+  options: {
+    media_base: string,
+    request_options: {},
+  },
 }

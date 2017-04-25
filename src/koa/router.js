@@ -1,7 +1,7 @@
 // @flow
-import type { Context } from 'koa'
 import Router from 'koa-router'
 import { graphqlKoa, graphiqlKoa } from 'graphql-server-koa'
+import type { Context } from '../types/flow'
 import initializeSchema from '../apollo/schema'
 import CONFIG from './server.config'
 import initializeAuth from './auth'

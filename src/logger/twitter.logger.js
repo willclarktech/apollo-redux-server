@@ -71,7 +71,9 @@ class TwitterLogger {
       }
     }
 
-    const tweets = await this.getTweets()
+    const tweets = await this
+      .getTweets()
+      .catch(() => console.error('Could not get logs from Twitter') || [])
     const logs = tweets
       .map(getAltTextFromTweetMedia)
       .map(getJSONLogs)
@@ -80,7 +82,7 @@ class TwitterLogger {
     return logs
   }
 
-  getTweets(): Promise<Array<TwitterGetStatusesResponse>> {
+  getTweets(): Promise<TwitterGetStatusesResponse> {
     const options = {
       screen_name: process.env.TWITTER_SCREEN_NAME,
       count: 200, // max
@@ -101,6 +103,7 @@ class TwitterLogger {
       })
   }
 
+  // $FlowFixMe: shape is enforced with helper function
   uploadMedia(media: Buffer): Promise<TwitterUploadMediaResponse> {
     return this.client
       .post('media/upload', { media })
@@ -141,6 +144,7 @@ class TwitterLogger {
 
   postStatusWithMedia({
     media_id_string: mediaIdString,
+  // $FlowFixMe: shape is enforced with helper function
   }: TwitterUploadMediaResponse): Promise<TwitterPostStatusResponse> {
     const tweet = {
       media_ids: mediaIdString,

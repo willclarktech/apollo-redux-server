@@ -4,21 +4,21 @@ This project is a proof-of-concept for combining the apollo graphql server with 
 
 ## Installation
 
-```bash
-npm install
+```sh
+yarn # or npm install
 cp .env.example .env
 # Add your own env variables to .env
 ```
 
 ## Starting the server
 
-```bash
-npm start
+```sh
+yarn start # or npm start
 ```
 
-This sets up a GraphQL endpoint for post requests to `localhost:3000/graphql`, and a GraphiQL interface you can navigate to at the same location.
+This sets up a GraphQL endpoint for post requests to `localhost:3000/graphql`, and a GraphiQL interface you can navigate to at `localhost:3000/graphiql`.
 
-By sending queries via GraphiQL you can see what’s in the redux store at initialisation time. It should match `INITIAL_STATE` from `src/redux/store.js`.
+By sending queries via GraphiQL you can see what’s in the redux store at initialization time. If you haven’t logged anything yet, it should match `INITIAL_STATE` from `src/redux/store.js`.
 
 ## Mutations
 
@@ -26,16 +26,17 @@ As you can see in `src/apollo/resolvers.js`, there is only one mutation, `dispat
 
 ```js
 Mutation: {
-  dispatch(_: any, { action }: MutationParams, ctx: Context): any {
+  dispatch(_: any, { action }: DispatchParams, ctx: Context): Promise<DispatchResult> {
     validate(ctx)(action)
     authenticate(ctx)(action)
 
-    logger.logAction(action)
-    store.dispatch(action)
-
-    return getMutationResponse(store.getState())(action)
+    return logger
+      .logAction(action)
+      .then(() => store.dispatch(action))
+      .then(() => ({ success: true }))
+      .catch(() => ({ success: false }))
   },
-}
+},
 ```
 
 You can apply a mutation in GraphiQL like this:
@@ -57,7 +58,7 @@ mutation DispatchAction($action: ActionInput!) {
 }
 ```
 
-The pattern here is to use redux actions as a standard for GraphQL mutations. First of all we log the action to an append-only store, then we dispatch the action to the server’s redux store. Then we get the appropriate response from the updated store for the action type and send it back to the client.
+The pattern here is to use redux actions as a standard for GraphQL mutations. First of all we log the action to an append-only store, then we dispatch the action to the server’s redux store. Then we tell the client whether it was successful.
 
 ## Isomorphic redux
 
@@ -65,7 +66,7 @@ The pattern here is to use redux actions as a standard for GraphQL mutations. Fi
 
 One of the great things about GraphQL is the way it allows the client to specify the information it needs without knowing anything much about the server. But mutations are often built much like traditional REST API endpoints: the client has to know which handlers are available on the API, which arguments they require, and what shape to put the required data in.
 
-With isomorphic redux, you can define your actions centrally for both client and server. Whenever the client store dispatches an action the server should know about, the client simply sends that action to the server, the server dispatches the action to its own store, and sends the relevant information about the updated store back to the client.
+With isomorphic redux, you can define your actions centrally for both client and server. Whenever the client store dispatches an action the server should know about, the client simply sends that action to the server, the server dispatches the action to its own store, and lets the client know if everything is in order, or if it should reverse the local change it may have made optimistically.
 
 ## Append-only log store
 
@@ -81,9 +82,7 @@ export default (initialState: ?AppState) => (
   state: ?AppState = initialState,
   action: Action,
 ): AppState => {
-  if (!state) {
-    throw new Error('No initial state provided')
-  }
+  // ...
   switch (action.type) {
     case 'UPVOTE_POST':
       return upvotePost(state)(action)
@@ -94,16 +93,16 @@ export default (initialState: ?AppState) => (
 }
 
 // from src/redux/store.js
-const ACTIONS: Array<Action> = getActionsFromLogs()
+const initializeStore = async (): Promise<ReduxStore> => {
+  const loggedActions: Array<Action> = await getLoggedActions()
+  // ...
 
-const initializedState: AppState =
-  ACTIONS.reduce(createReducer(), INITIAL_STATE)
+  const initializedState: AppState =
+    loggedActions.reduce(createReducer(), INITIAL_STATE)
 
-const reducer: Reducer = createReducer(initializedState)
-
-const store: ReduxStore = createStore(reducer)
-
-export default store
+  const reducer: Reducer = createReducer(initializedState)
+  return createStore(reducer)
+}
 ```
 
 **This way you get the benefits of immutable data on the back end as well as the front end.**
@@ -114,7 +113,11 @@ Benefits include:
 - Mitigate the effects of bugs by fixing the code and running the history through the reducer to reach the correct result
 - ...
 
-In this proof-of-concept app, the logs are just stored in text files according to date. You could just as well use a table in a SQL database or a blockchain (e.g. use Bitcoin’s). Running `npm run filebeat` will forward the logs from these text files to an expected logstash service running on `localhost:5044` for storage in elasticsearch and display using kibana. As you can see in the `docker-compose.yml` file, I’ve used [Sébastien Pujadas’s excellent docker image](https://elk-docker.readthedocs.io/) to get that up and running.
+In this proof-of-concept app, there are two loggers to choose from:
+1. a local file logger, which just stores logs in text files according to date
+1. a twitter logger, which stores logs in uploaded media metadata
+
+You could just as well use a table in a SQL database or a blockchain (e.g. use Bitcoin’s). Running `yarn filebeat` or `npm run filebeat` will forward the logs from the file-based logger to an expected logstash service running on `localhost:5044` for storage in elasticsearch and display using kibana. As you can see in the `docker-compose.yml` file, I’ve used [Sébastien Pujadas’s excellent docker image](https://elk-docker.readthedocs.io/) to get that up and running.
 
 ## What’s up with all these higher-order functions?
 

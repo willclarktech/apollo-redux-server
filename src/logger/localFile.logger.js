@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable immutable/no-mutation, immutable/no-this */
 import fs from 'fs'
 import { flatten } from 'lodash'
 import type {

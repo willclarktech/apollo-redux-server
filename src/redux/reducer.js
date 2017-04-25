@@ -44,7 +44,7 @@ const createPost = (state: AppState) => (action: CreatePostPublicAction): AppSta
 const createAuthor = (state: AppState) => (action: CreateAuthorPrivateAction): AppState => {
   const { authors } = state
   const { authorId, name } = action
-  const id = authorId ? authorId : `${authors.size + 1}`
+  const id = authorId || `${authors.size + 1}`
   const newAuthor: Author = { name }
   const newAuthors = authors.set(id, newAuthor)
   return {

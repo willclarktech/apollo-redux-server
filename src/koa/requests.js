@@ -1,7 +1,19 @@
 // @flow
-import client from 'axios'
+import axios from 'axios'
 
-client.defaults.headers.common.Accept = 'application/json'
+const client = {
+  ...axios,
+  defaults: {
+    ...axios.defaults,
+    headers: {
+      ...axios.defaults.headers,
+      common: {
+        ...axios.defaults.headers.common,
+        Accept: 'application/json',
+      },
+    },
+  },
+}
 
 export const getGitHubAccessToken = (code: string) => {
   const {

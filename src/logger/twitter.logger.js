@@ -18,7 +18,7 @@ import type {
 
 class TwitterLogger {
   genesisHash: string
-  mostRecentHash: string
+  mostRecentHash: ?string
   baseImage: Buffer
   client: TwitterClient
 
@@ -38,7 +38,6 @@ class TwitterLogger {
       throw new Error('TWITTER_BASE_IMAGE_LOCATION not set in environment.')
     }
     this.genesisHash = GENESIS_HASH
-    this.mostRecentHash = this.getMostRecentHash()
     this.baseImage = fs.readFileSync(TWITTER_BASE_IMAGE_LOCATION)
 
     this.client = new Client({
@@ -49,8 +48,15 @@ class TwitterLogger {
     })
   }
 
-  getMostRecentHash(): string {
-    return this.genesisHash
+  async getMostRecentHash(): Promise<string> {
+    return this.mostRecentHash
+      || this.getLogs(1)
+        .then(logs => {
+          const l = logs.length
+          return l
+            ? logs[l - 1].hash
+            : this.genesisHash
+        })
   }
 
   setMostRecentHash(hash: string): string {
@@ -58,7 +64,7 @@ class TwitterLogger {
     return this.mostRecentHash
   }
 
-  getLogs(): Promise<Array<Log>> {
+  getLogs(n: ?number): Promise<Array<Log>> {
     const getAltTextFromTweetMedia = tweet =>
       _get(tweet, ['extended_entities', 'media', 0, 'ext_alt_text'], null)
     const getJSONLogs = (altText: ?string) => {
@@ -73,19 +79,20 @@ class TwitterLogger {
     }
 
     return this
-      .getTweets()
+      .getTweets(n)
       .then(tweets => tweets.map(getAltTextFromTweetMedia))
       .then(altTexts => altTexts.map(getJSONLogs))
       .then(logs => logs.filter(Boolean))
   }
 
-  getTweets(): Promise<TwitterGetStatusesResponse> {
+  getTweets(n: ?number): Promise<TwitterGetStatusesResponse> {
+    const count = n || 200 // max
     const options = {
       screen_name: process.env.TWITTER_SCREEN_NAME,
-      count: 200, // max
       trim_user: true,
       exclude_replies: true,
       include_ext_alt_text: true,
+      count,
     }
 
     return this.client
@@ -153,8 +160,8 @@ class TwitterLogger {
       .then(ensureExternalApiResponseShape('created_at'))
   }
 
-  logAction(action: Action): Promise<string> {
-    const actionToLog = constructActionToLog(action)(this.mostRecentHash)
+  async logAction(action: Action): Promise<string> {
+    const actionToLog = constructActionToLog(action)(await this.getMostRecentHash())
     const actionString = JSON.stringify(actionToLog)
 
     return this.uploadMedia(this.baseImage)

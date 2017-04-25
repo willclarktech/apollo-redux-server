@@ -87,7 +87,7 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
           .logAction(action)
           .then(() => store.dispatch(action))
           .then(() => ({ success: true }))
-          .catch(() => ({ success: false }))
+          .catch(error => ctx.throw(error.status || 500, error.message))
       },
     },
   }

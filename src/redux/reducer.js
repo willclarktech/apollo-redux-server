@@ -21,7 +21,7 @@ const upvotePost = (state: AppState) => (action: UpvotePostPublicAction): AppSta
   const { postId } = action
   const posts = state.get(POSTS)
   const oldPost = posts.get(postId)
-  if (!oldPost) throw new Error(`Couldn’t find post with id ${postId}`)
+  if (!oldPost) throw new Error(`Couldn’t find post with id ${postId}.`)
   const oldVotes = oldPost.get(VOTES)
 
   const newPost = oldPost.set(VOTES, oldVotes + 1)
@@ -55,7 +55,7 @@ export default (initialState: ?AppState) => (
   action: Action,
 ): AppState => {
   if (!state) {
-    throw new Error('No initial state provided')
+    throw new Error('No initial state provided.')
   }
   switch (action.type) {
     case 'UPVOTE_POST':

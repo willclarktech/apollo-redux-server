@@ -18,7 +18,7 @@ const ensureHashConsistency = (aggregator: LogAggregator, log: Log): LogAggregat
 
 const getInitialLogAggregator = (): LogAggregator => {
   if (!process.env.GENESIS_HASH) {
-    throw new Error('Genesis hash not set in environment.')
+    throw new Error('GENESIS_HASH not set in environment.')
   }
   return {
     previousHash: process.env.GENESIS_HASH,

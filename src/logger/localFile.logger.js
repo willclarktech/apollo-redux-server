@@ -17,7 +17,7 @@ class LocalFileLogger {
     this.logPath = './logs/'
     const { GENESIS_HASH } = process.env
     if (typeof GENESIS_HASH !== 'string') {
-      throw new Error('GENESIS_HASH not set in .env file')
+      throw new Error('GENESIS_HASH not set in environment.')
     }
     this.genesisHash = GENESIS_HASH
     this.mostRecentHash = this.getMostRecentHash()

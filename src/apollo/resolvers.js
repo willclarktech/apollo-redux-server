@@ -49,7 +49,7 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
     .get(id)
 
     if (!author) {
-      throw new Error(`Couldn’t find author with id ${id}`)
+      throw new Error(`Couldn’t find author with id ${id}.`)
     }
 
     return convertMapIntoObjectWithId([id, author])

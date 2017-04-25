@@ -31,10 +31,10 @@ class TwitterLogger {
       TWITTER_BASE_IMAGE_LOCATION,
     } = process.env
     if (typeof GENESIS_HASH !== 'string') {
-      throw new Error('GENESIS_HASH not set in .env file')
+      throw new Error('GENESIS_HASH not set in environment.')
     }
     if (typeof TWITTER_BASE_IMAGE_LOCATION !== 'string') {
-      throw new Error('TWITTER_BASE_IMAGE_LOCATION not set in .env file')
+      throw new Error('TWITTER_BASE_IMAGE_LOCATION not set in environment.')
     }
     this.genesisHash = GENESIS_HASH
     this.mostRecentHash = this.getMostRecentHash()
@@ -91,7 +91,7 @@ class TwitterLogger {
       .get('statuses/user_timeline', options)
       .then(response => {
         if (!(response instanceof Array)) {
-          throw new Error('External API response is not Array')
+          throw new Error('External API response is not Array.')
         }
         return response.length === 0
           ? response

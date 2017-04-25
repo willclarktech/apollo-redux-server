@@ -39,7 +39,7 @@ export const ensureExternalApiResponseShape =
       const pathString = typeof path === 'string'
         ? path
         : path.join('.')
-      throw new Error(`External API response falsy at path: ${pathString}`)
+      throw new Error(`External API response falsy at path: ${pathString}.`)
     }
     return response
   }

@@ -93,13 +93,15 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
       },
     },
     Mutation: {
-      async dispatch(_: any, { action }: DispatchParams, ctx: Context): Promise<DispatchResult> {
+      dispatch(_: any, { action }: DispatchParams, ctx: Context): Promise<DispatchResult> {
         validate(ctx)(action)
         authenticate(ctx)(action)
 
-        await logger.logAction(action)
-        store.dispatch(action)
-        return { success: true }
+        return logger
+          .logAction(action)
+          .then(() => store.dispatch(action))
+          .then(() => ({ success: true }))
+          .catch(() => ({ success: false }))
       },
     },
   }

@@ -6,7 +6,7 @@ import {
   SECRETS,
 } from '../types/constants'
 import logger from '../logger'
-import initialiseStore from '../redux/store'
+import storePromise from '../redux/store'
 import validate from '../redux/validator'
 import authenticate from './authenticator'
 import { convertMapIntoObjectWithId } from './helpers'
@@ -101,6 +101,7 @@ const defineResolvers = (store: ReduxStore): Object => {
 }
 
 const initialiseResolvers = () =>
-  initialiseStore().then(defineResolvers)
+  storePromise
+    .then(defineResolvers)
 
 export default initialiseResolvers

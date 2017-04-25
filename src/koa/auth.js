@@ -2,10 +2,13 @@
 import type { Context } from 'koa'
 import qs from 'qs'
 import jwt from 'jsonwebtoken'
-import type { CreateAuthorPrivateAction } from '../types/flow'
+import type {
+  CreateAuthorPrivateAction,
+  ReduxStore,
+} from '../types/flow'
 import { AUTHORS } from '../types/constants'
 import logger from '../logger'
-import store from '../redux/store'
+import storePromise from '../redux/store'
 import CONFIG from './server.config'
 import {
   getGitHubAccessToken,
@@ -26,7 +29,7 @@ const {
   },
 } = CONFIG
 
-export function redirectToGitHub(ctx: Context): void {
+function redirectToGitHub(ctx: Context): void {
   const query = {
     client_id: GITHUB_CLIENT_ID,
     redirect_uri: `http://${HOST}:${PORT}${GITHUB_CALLBACK}`,
@@ -42,7 +45,10 @@ type AuthorDetails = {
   name: string,
 }
 
-const createAuthorIfNecessary = ({ authorId, name }: AuthorDetails): void => {
+const createAuthorIfNecessary = (store: ReduxStore) => ({
+  authorId,
+  name,
+}: AuthorDetails): void => {
   const author = store
     .getState()
     .get(AUTHORS)
@@ -72,9 +78,12 @@ const constructRedirectUrlWithToken = ({ authorId, name }: AuthorDetails): strin
   return `${CLIENT}?${queryString}`
 }
 
-export async function handleGitHubCallback(ctx: Context): Promise<void> {
+const createGitHubCallbackHandler = store =>
+async function handleGitHubCallback(ctx: Context): Promise<void> {
   const { code } = ctx.query
-  const { data: { access_token } } = await getGitHubAccessToken(code)
+  const { data: {
+    access_token,
+  } } = await getGitHubAccessToken(code)
   const { data: {
     id,
     name,
@@ -83,8 +92,19 @@ export async function handleGitHubCallback(ctx: Context): Promise<void> {
   const authorId = `${id}`
   const authorDetails = { authorId, name }
 
-  createAuthorIfNecessary(authorDetails)
+  createAuthorIfNecessary(store)(authorDetails)
 
   const url = constructRedirectUrlWithToken(authorDetails)
   ctx.redirect(url)
 }
+
+const defineAuthFunctions = (store: ReduxStore): Object => ({
+  redirectToGitHub,
+  handleGitHubCallback: createGitHubCallbackHandler(store),
+})
+
+const initialiseAuth = () =>
+  storePromise
+    .then(defineAuthFunctions)
+
+export default initialiseAuth

@@ -21,4 +21,5 @@ const initialiseStore = async (): Promise<ReduxStore> => {
   return createStore(reducer)
 }
 
-export default initialiseStore
+const store = initialiseStore()
+export default store

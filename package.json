@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.15.3",
+    "blockchain-logger": "^1.0.2",
     "dotenv": "^2.0.0",
     "graphql": "^0.8.2",
     "graphql-server-koa": "^0.4.3",

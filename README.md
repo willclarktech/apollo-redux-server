@@ -5,6 +5,8 @@ This project is a proof-of-concept for combining the apollo graphql server with 
 ## Installation
 
 ```sh
+git clone https://github.com/willclarktech/apollo-redux-server.git
+cd apollo-redux-server
 yarn # or npm install
 cp .env.example .env
 # Add your own env variables to .env
@@ -94,8 +96,9 @@ export default (initialState: ?AppState) => (
 
 // from src/redux/store.js
 const initializeStore = async (): Promise<ReduxStore> => {
-  const loggedActions: Array<Action> = await getLoggedActions()
-  // ...
+  const loggedActions: Array<Action> =
+    await logger.getLoggedData()
+    // ...
 
   const initializedState: AppState =
     loggedActions.reduce(createReducer(), INITIAL_STATE)
@@ -113,7 +116,7 @@ Benefits include:
 - Mitigate the effects of bugs by fixing the code and running the history through the reducer to reach the correct result
 - ...
 
-In this proof-of-concept app, there are two loggers to choose from:
+This proof-of-concept app uses [blockchain-logger](https://github.com/willclarktech/blockchain-logger), which provides two loggers to choose from:
 1. a local file logger, which just stores logs in text files according to date
 1. a twitter logger, which stores logs in uploaded media metadata
 

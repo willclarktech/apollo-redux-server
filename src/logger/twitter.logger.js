@@ -17,6 +17,8 @@ import type {
 } from '../types/flow'
 
 class TwitterLogger {
+  maxPageSize: number
+  screenName: string
   genesisHash: string
   mostRecentHash: ?string
   baseImage: Buffer
@@ -30,6 +32,7 @@ class TwitterLogger {
       TWITTER_CONSUMER_KEY,
       TWITTER_CONSUMER_SECRET,
       TWITTER_BASE_IMAGE_LOCATION,
+      TWITTER_SCREEN_NAME,
     } = process.env
     if (typeof GENESIS_HASH !== 'string') {
       throw new Error('GENESIS_HASH not set in environment.')
@@ -37,6 +40,11 @@ class TwitterLogger {
     if (typeof TWITTER_BASE_IMAGE_LOCATION !== 'string') {
       throw new Error('TWITTER_BASE_IMAGE_LOCATION not set in environment.')
     }
+    if (typeof TWITTER_SCREEN_NAME !== 'string') {
+      throw new Error('TWITTER_SCREEN_NAME not set in environment.')
+    }
+    this.maxPageSize = 200
+    this.screenName = TWITTER_SCREEN_NAME
     this.genesisHash = GENESIS_HASH
     this.baseImage = fs.readFileSync(TWITTER_BASE_IMAGE_LOCATION)
 
@@ -85,26 +93,56 @@ class TwitterLogger {
       .then(logs => logs.filter(Boolean))
   }
 
-  getTweets(n: ?number): Promise<TwitterGetStatusesResponse> {
-    const count = n || 200 // max
-    const options = {
-      screen_name: process.env.TWITTER_SCREEN_NAME,
-      trim_user: true,
-      exclude_replies: true,
-      include_ext_alt_text: true,
-      count,
+  async getTweets(n: ?number): Promise<TwitterGetStatusesResponse> {
+    const count = n
+      ? Math.min(n, this.maxPageSize)
+      : this.maxPageSize
+
+    const processResponse = async response => {
+      if (!(response instanceof Array)) {
+        throw new Error('External API response is not Array.')
+      }
+      return response.length
+        ? ensureExternalApiResponseShape(['0', 'extended_entities'])(response)
+        : response
     }
 
-    return this.client
-      .get('statuses/user_timeline', options)
-      .then(response => {
-        if (!(response instanceof Array)) {
-          throw new Error('External API response is not Array.')
+    const getMoreTweets = async (currentTweets: TwitterGetStatusesResponse) => {
+      const l = currentTweets.length
+      const maxId = l
+        ? currentTweets[l - 1].id_str
+        : null
+
+      const defaultOptions = {
+        screen_name: this.screenName,
+        trim_user: true,
+        exclude_replies: true,
+        include_ext_alt_text: true,
+        count,
+      }
+
+      const options = maxId
+        ? {
+          ...defaultOptions,
+          max_id: maxId,
         }
-        return response.length === 0
-          ? response
-          : ensureExternalApiResponseShape(['0', 'extended_entities'])(response)
-      })
+        : defaultOptions
+
+      return this.client
+        .get('statuses/user_timeline', options)
+        .then(processResponse)
+        .then(newTweets => {
+          const tweetsToAdd = maxId
+            ? newTweets.slice(1)
+            : newTweets
+          const tweets = [...currentTweets, ...tweetsToAdd]
+          return tweetsToAdd.length && (!n || n > tweets.length)
+            ? getMoreTweets(tweets)
+            : tweets
+        })
+    }
+
+    return getMoreTweets([])
   }
 
   // $FlowFixMe: shape is enforced with helper function

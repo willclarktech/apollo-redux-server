@@ -1,4 +1,5 @@
 // @flow
+import type { ID } from './helper.types'
 import type { Action } from './redux.types'
 
 export type LogWithoutHash = {
@@ -19,6 +20,7 @@ export type LogAggregator = {|
 |}
 
 export type TwitterGetStatusesResponse = Array<{
+  id_str: ID,
   extended_entities: {
     media: Array<{
       ext_alt_text: string,

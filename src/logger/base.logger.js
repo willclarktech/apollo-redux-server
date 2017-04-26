@@ -3,6 +3,7 @@
 import crypto from 'crypto'
 import type {
   Log,
+  LogAggregator,
   LogWithoutHash,
 } from '../types/flow'
 
@@ -51,6 +52,36 @@ class Logger<D> {
       .createHash('sha256')
       .update(JSON.stringify(log), 'utf8')
       .digest('hex')
+  }
+
+  getLoggedData(ensureHashConsistency: ?boolean): Promise<Array<D>> {
+    const removeInconsistentLogs = (aggregator: LogAggregator, log: Log<D>): LogAggregator => {
+      const { previousHash, validLogs } = aggregator
+      const { hash, meta } = log
+      return meta.previousHash === previousHash
+        ? {
+          previousHash: hash,
+          validLogs: [...validLogs, log],
+        }
+        : aggregator
+    }
+
+    const initialLogAggregator = {
+      previousHash: this.genesisHash,
+      validLogs: [],
+    }
+
+    return this.getLogs()
+      .then(logs => ensureHashConsistency
+        ? logs
+          .reduce(removeInconsistentLogs, initialLogAggregator)
+          .validLogs
+        : logs,
+      )
+      .then(logs => logs
+        .map(log => log.data)
+        .filter(Boolean),
+      )
   }
 
   async getMostRecentHash(): Promise<string> {

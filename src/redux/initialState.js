@@ -1,5 +1,4 @@
 // @flow
-import { createTupleWithId } from './helpers'
 import type {
   AppState,
   Author,
@@ -7,6 +6,8 @@ import type {
   Post,
   Secret,
 } from '../types/flow'
+
+const createTupleWithId = <V>(v: V, i: number): [ID, V] => [(i + 1).toString(), v]
 
 const authors: Map<ID, Author> = new Map([
   { name: 'Tom Coleman' },

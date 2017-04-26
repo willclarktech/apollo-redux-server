@@ -11,25 +11,26 @@ const {
   TWITTER_BASE_IMAGE_LOCATION,
   TWITTER_SCREEN_NAME,
 } = process.env
-if (typeof GENESIS_HASH !== 'string') {
+
+if (!GENESIS_HASH) {
   throw new Error('GENESIS_HASH not set in environment.')
 }
-if (typeof TWITTER_ACCESS_TOKEN_KEY !== 'string') {
+if (!TWITTER_ACCESS_TOKEN_KEY) {
   throw new Error('TWITTER_ACCESS_TOKEN_KEY not set in environment.')
 }
-if (typeof TWITTER_ACCESS_TOKEN_SECRET !== 'string') {
+if (!TWITTER_ACCESS_TOKEN_SECRET) {
   throw new Error('TWITTER_ACCESS_TOKEN_SECRET not set in environment.')
 }
-if (typeof TWITTER_CONSUMER_KEY !== 'string') {
+if (!TWITTER_CONSUMER_KEY) {
   throw new Error('TWITTER_CONSUMER_KEY not set in environment.')
 }
-if (typeof TWITTER_CONSUMER_SECRET !== 'string') {
+if (!TWITTER_CONSUMER_SECRET) {
   throw new Error('TWITTER_CONSUMER_SECRET not set in environment.')
 }
-if (typeof TWITTER_BASE_IMAGE_LOCATION !== 'string') {
+if (!TWITTER_BASE_IMAGE_LOCATION) {
   throw new Error('TWITTER_BASE_IMAGE_LOCATION not set in environment.')
 }
-if (typeof TWITTER_SCREEN_NAME !== 'string') {
+if (!TWITTER_SCREEN_NAME) {
   throw new Error('TWITTER_SCREEN_NAME not set in environment.')
 }
 

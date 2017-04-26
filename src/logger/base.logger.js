@@ -4,21 +4,16 @@ import crypto from 'crypto'
 import type {
   Log,
   LogAggregator,
+  LoggerOptions,
   LogWithoutHash,
-} from '../types/flow'
-
-export type LoggerOptions = {
-  genesisHash: string,
-}
+} from './base.types'
 
 class Logger<D> {
   genesisHash: string
   mostRecentHash: ?string
   getHashForLog: (log: LogWithoutHash<D>) => string
 
-  constructor({
-    genesisHash,
-  }: LoggerOptions) {
+  constructor({ genesisHash }: LoggerOptions) {
     this.genesisHash = genesisHash
     this.getHashForLog = log =>
       crypto

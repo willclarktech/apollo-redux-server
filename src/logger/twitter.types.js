@@ -1,27 +1,6 @@
 // @flow
-import type { ID } from './helper.types'
-
-type LogMeta = {
-  timestamp: Date,
-  previousHash: string,
-}
-
-export type LogWithoutHash<D> = {
-  data: D,
-  meta: LogMeta,
-}
-
-export type Log<D> = LogWithoutHash<D> & {
-  hash: string,
-}
-
-export type LogAggregator = {|
-  previousHash: string,
-  validLogs: Array<Log<any>>,
-|}
-
 export type TwitterGetStatusesResponse = Array<{
-  id_str: ID,
+  id_str: string,
   extended_entities: {
     media: Array<{
       ext_alt_text: string,

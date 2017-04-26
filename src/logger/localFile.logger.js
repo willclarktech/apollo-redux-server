@@ -3,8 +3,7 @@
 import fs from 'fs'
 import { flatten } from 'lodash'
 import Logger from './base.logger'
-import type { LoggerOptions } from './base.logger'
-import type { Log } from '../types/flow'
+import type { Log, LoggerOptions } from './base.types'
 
 type LocalFileLoggerOptions = LoggerOptions & {
   logPath: string,

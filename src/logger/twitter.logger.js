@@ -4,14 +4,13 @@ import fs from 'fs'
 import Client from 'twitter'
 import _get from 'lodash/get'
 import Logger from './base.logger'
-import type { LoggerOptions } from './base.logger'
+import type { Log, LoggerOptions } from './base.types'
 import type {
-  Log,
   TwitterClient,
   TwitterGetStatusesResponse,
   TwitterPostStatusResponse,
   TwitterUploadMediaResponse,
-} from '../types/flow'
+} from './twitter.types'
 
 const ensureExternalApiResponseShape = (path: string | Array<string>) => <R>(response: R): R => {
   if (!_get(response, path, null)) {

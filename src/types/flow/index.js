@@ -29,16 +29,6 @@ export type {
 } from './koa.types'
 
 export type {
-  Log,
-  LogAggregator,
-  LogWithoutHash,
-  TwitterClient,
-  TwitterGetStatusesResponse,
-  TwitterPostStatusResponse,
-  TwitterUploadMediaResponse,
-} from './logger.types'
-
-export type {
   Action,
   AppState,
   CreateAuthorPrivateAction,

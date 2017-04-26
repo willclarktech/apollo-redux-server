@@ -3,13 +3,16 @@ import logger from '../logger'
 import storePromise from '../redux/store'
 import validate from '../redux/validator'
 import authenticate from './authenticator'
-import { convertMapIntoObjectWithId } from './helpers'
+import {
+  convertMapToArray,
+  convertMapToArrayWithFilter,
+  convertMapToObjectWithId,
+  doesAuthorIdMatchUserId,
+} from './helpers'
 
 import type {
   AuthorWithID,
   Context,
-  Converter,
-  ConverterWithFilter,
   DispatchParams,
   DispatchResult,
   ID,
@@ -23,19 +26,6 @@ type Resolvers = {
   Mutation: {},
 }
 
-const doesAuthorIdMatchUserId = (userId: ID) =>
-  ([/* key */, { authorId }: { authorId: ID }]): boolean =>
-  userId === authorId
-
-const convertToArray: Converter = map =>
-  [...map.entries()]
-    .map(convertMapIntoObjectWithId)
-
-const convertToArrayWithFilter: ConverterWithFilter = filter => map =>
-  [...map.entries()]
-    .filter(filter)
-    .map(convertMapIntoObjectWithId)
-
 const defineResolvers = (store: ReduxStore): Resolvers => {
   const getAuthorById = (id: ID): AuthorWithID => {
     const { authors } = store.getState()
@@ -45,13 +35,13 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
       throw new Error(`Couldn’t find author with id ${id}.`)
     }
 
-    return convertMapIntoObjectWithId([id, author])
+    return convertMapToObjectWithId([id, author])
   }
   return {
     Query: {
       posts(): Array<PostWithID> {
         const { posts } = store.getState()
-        return convertToArray(posts)
+        return convertMapToArray(posts)
       },
       secrets(_: any, __: any, ctx: Context): Array<SecretWithID> {
         authenticate(ctx)
@@ -59,7 +49,7 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
         if (!user) throw new Error('No user in context state.')
         const { secrets } = store.getState()
 
-        return convertToArrayWithFilter(doesAuthorIdMatchUserId(user.id))(secrets)
+        return convertMapToArrayWithFilter(doesAuthorIdMatchUserId(user.id))(secrets)
       },
     },
     Post: {
@@ -75,7 +65,7 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
     Author: {
       posts({ id }: AuthorWithID): Array<PostWithID> {
         const { posts } = store.getState()
-        return convertToArrayWithFilter(doesAuthorIdMatchUserId(id))(posts)
+        return convertMapToArrayWithFilter(doesAuthorIdMatchUserId(id))(posts)
       },
     },
     Mutation: {

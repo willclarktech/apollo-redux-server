@@ -1,11 +1,25 @@
 // @flow
 import type {
+  Converter,
+  ConverterWithFilter,
   DomainObject,
   ID,
 } from '../types/flow'
 
-// eslint-disable-next-line import/prefer-default-export
-export const convertMapIntoObjectWithId = ([id, value]: [ID, DomainObject]) => ({
+export const convertMapToObjectWithId = ([id, value]: [ID, DomainObject]) => ({
   ...value,
   id,
 })
+
+export const convertMapToArray: Converter = map =>
+[...map.entries()]
+  .map(convertMapToObjectWithId)
+
+export const convertMapToArrayWithFilter: ConverterWithFilter = filter => map =>
+[...map.entries()]
+  .filter(filter)
+  .map(convertMapToObjectWithId)
+
+export const doesAuthorIdMatchUserId = (userId: ID) =>
+  ([/* id */, { authorId }]: [any, { authorId: ID }]): boolean =>
+  userId === authorId

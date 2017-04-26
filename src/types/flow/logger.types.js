@@ -1,22 +1,23 @@
 // @flow
 import type { ID } from './helper.types'
-import type { Action } from './redux.types'
 
-export type LogWithoutHash = {
-  action: Action,
-  meta: {
-    timestamp: Date,
-    previousHash: string,
-  },
+type LogMeta = {
+  timestamp: Date,
+  previousHash: string,
 }
 
-export type Log = LogWithoutHash & {
+export type LogWithoutHash<D> = {
+  data: D,
+  meta: LogMeta,
+}
+
+export type Log<D> = LogWithoutHash<D> & {
   hash: string,
 }
 
 export type LogAggregator = {|
   previousHash: string,
-  validLogs: Array<Log>,
+  validLogs: Array<Log<any>>,
 |}
 
 export type TwitterGetStatusesResponse = Array<{

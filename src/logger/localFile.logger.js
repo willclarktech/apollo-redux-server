@@ -2,65 +2,58 @@
 /* eslint-disable immutable/no-mutation, immutable/no-this */
 import fs from 'fs'
 import { flatten } from 'lodash'
-import type {
-  Action,
-  Log,
-} from '../types/flow'
-import { constructActionToLog } from './helpers'
+import Logger from './base.logger'
+import type { LoggerOptions } from './base.logger'
+import type { Log } from '../types/flow'
 
-class LocalFileLogger {
+type LocalFileLoggerOptions = LoggerOptions & {
+  logPath: string,
+  logFilePrefix: ?string,
+}
+
+class LocalFileLogger<D> extends Logger<D> {
   logPath: string
+  logFilePrefix: string
   stream: stream$Writable & { path?: string }
-  genesisHash: string
-  mostRecentHash: string
+  mostRecentHash: ?string
 
-  constructor(): void {
-    this.logPath = './logs/'
-    const { GENESIS_HASH } = process.env
-    if (typeof GENESIS_HASH !== 'string') {
-      throw new Error('GENESIS_HASH not set in environment.')
-    }
-    this.genesisHash = GENESIS_HASH
-    this.mostRecentHash = this.getMostRecentHash()
+  constructor(options: LocalFileLoggerOptions): void {
+    super(options)
 
+    this.logPath = options.logPath
+    this.logFilePrefix = options.logFilePrefix || 'logs'
     this.refreshStream()
+  }
+
+  async store(logString: string): Promise<boolean> {
+    this.refreshStream()
+    this.stream.write(`${logString}\n`)
+    return true
+  }
+
+  async getLogs(n: ?number): Promise<Array<Log<D>>> {
+    const logFiles = fs.readdirSync(this.logPath)
+    const getLastLog = () => {
+      const recentLogs = this.getLogsFromFile(logFiles[logFiles.length - 1])
+      return recentLogs.slice(recentLogs.length - 1)
+    }
+    return n === 1
+      ? getLastLog()
+      : flatten(logFiles.map(this.getLogsFromFile.bind(this)))
+        .slice(n || 0)
   }
 
   getLogFileName(): string {
     const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
-    return `${this.logPath}actions_${today}.log`
+    return `${this.logPath}${this.logFilePrefix}_${today}.log`
   }
 
-  async getLogs(): Promise<Array<Log>> {
-    const logFiles = fs.readdirSync(this.logPath)
-    return flatten(logFiles.map(this.getLogsFromFile.bind(this)))
-  }
-
-  getLogsFromFile(file: string): Array<Log> {
+  getLogsFromFile(file: string): Array<Log<D>> {
     return fs
       .readFileSync(`${this.logPath}${file}`, 'utf-8')
       .split('\n')
-      .filter(action => !!action)
-      .map(action => JSON.parse(action))
-  }
-
-  getMostRecentHash(): string {
-    const logFiles = fs.readdirSync(this.logPath)
-    const lastLogFile = logFiles[logFiles.length - 1]
-    const actions = this.getLogsFromFile(lastLogFile)
-    const lastAction = actions[actions.length - 1]
-    return lastAction ? lastAction.hash : this.genesisHash
-  }
-
-  async logAction(action: Action): Promise<string> {
-    const actionToLog: Log = constructActionToLog(action)(this.mostRecentHash)
-
-    this.refreshStream()
-    this.stream.write(`${JSON.stringify(actionToLog)}\n`)
-
-    const { hash } = actionToLog
-    this.mostRecentHash = hash
-    return hash
+      .filter(log => !!log)
+      .map(log => JSON.parse(log))
   }
 
   refreshStream(): void {

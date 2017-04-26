@@ -3,12 +3,9 @@
 import fs from 'fs'
 import Client from 'twitter'
 import _get from 'lodash/get'
-import {
-  constructActionToLog,
-  ensureExternalApiResponseShape,
-} from './helpers'
+import Logger from './base.logger'
+import type { LoggerOptions } from './base.logger'
 import type {
-  Action,
   Log,
   TwitterClient,
   TwitterGetStatusesResponse,
@@ -16,63 +13,64 @@ import type {
   TwitterUploadMediaResponse,
 } from '../types/flow'
 
-class TwitterLogger {
+const ensureExternalApiResponseShape = (path: string | Array<string>) => <R>(response: R): R => {
+  if (!_get(response, path, null)) {
+    const pathString = typeof path === 'string'
+      ? path
+      : path.join('.')
+    throw new Error(`External API response falsy at path: ${pathString}.`)
+  }
+  return response
+}
+
+type TwitterLoggerOptions = LoggerOptions & {
+  accessTokenKey: string,
+  accessTokenSecret: string,
+  baseImageLocation: string,
+  consumerKey: string,
+  consumerSecret: string,
+  screenName: string,
+}
+
+class TwitterLogger<D> extends Logger<D> {
   maxPageSize: number
   screenName: string
-  genesisHash: string
   mostRecentHash: ?string
   baseImage: Buffer
   client: TwitterClient
 
-  constructor(): void {
+  constructor(options: TwitterLoggerOptions): void {
+    super(options)
+
     const {
-      GENESIS_HASH,
-      TWITTER_ACCESS_TOKEN_KEY,
-      TWITTER_ACCESS_TOKEN_SECRET,
-      TWITTER_CONSUMER_KEY,
-      TWITTER_CONSUMER_SECRET,
-      TWITTER_BASE_IMAGE_LOCATION,
-      TWITTER_SCREEN_NAME,
-    } = process.env
-    if (typeof GENESIS_HASH !== 'string') {
-      throw new Error('GENESIS_HASH not set in environment.')
-    }
-    if (typeof TWITTER_BASE_IMAGE_LOCATION !== 'string') {
-      throw new Error('TWITTER_BASE_IMAGE_LOCATION not set in environment.')
-    }
-    if (typeof TWITTER_SCREEN_NAME !== 'string') {
-      throw new Error('TWITTER_SCREEN_NAME not set in environment.')
-    }
-    this.maxPageSize = 200
-    this.screenName = TWITTER_SCREEN_NAME
-    this.genesisHash = GENESIS_HASH
-    this.baseImage = fs.readFileSync(TWITTER_BASE_IMAGE_LOCATION)
+      accessTokenKey,
+      accessTokenSecret,
+      baseImageLocation,
+      consumerKey,
+      consumerSecret,
+      screenName,
+    } = options
+
+    this.maxPageSize = 200 // https://dev.twitter.com/rest/reference/get/statuses/user_timeline
+    this.screenName = screenName
+    this.baseImage = fs.readFileSync(baseImageLocation)
 
     this.client = new Client({
-      access_token_key: TWITTER_ACCESS_TOKEN_KEY,
-      access_token_secret: TWITTER_ACCESS_TOKEN_SECRET,
-      consumer_key: TWITTER_CONSUMER_KEY,
-      consumer_secret: TWITTER_CONSUMER_SECRET,
+      access_token_key: accessTokenKey,
+      access_token_secret: accessTokenSecret,
+      consumer_key: consumerKey,
+      consumer_secret: consumerSecret,
     })
   }
 
-  async getMostRecentHash(): Promise<string> {
-    return this.mostRecentHash
-      || this.getLogs(1)
-        .then(logs => {
-          const l = logs.length
-          return l
-            ? logs[l - 1].hash
-            : this.genesisHash
-        })
+  async store(logString: string): Promise<boolean> {
+    return this.uploadMedia(this.baseImage)
+      .then(this.setAltTextOnMedia.bind(this, logString))
+      .then(this.postStatusWithMedia.bind(this))
+      .then(() => true)
   }
 
-  setMostRecentHash(hash: string): string {
-    this.mostRecentHash = hash
-    return this.mostRecentHash
-  }
-
-  getLogs(n: ?number): Promise<Array<Log>> {
+  getLogs(n: ?number): Promise<Array<Log<D>>> {
     const getAltTextFromTweetMedia = tweet =>
       _get(tweet, ['extended_entities', 'media', 0, 'ext_alt_text'], null)
     const getJSONLogs = (altText: ?string) => {
@@ -88,9 +86,12 @@ class TwitterLogger {
 
     return this
       .getTweets(n)
-      .then(tweets => tweets.map(getAltTextFromTweetMedia))
-      .then(altTexts => altTexts.map(getJSONLogs))
-      .then(logs => logs.filter(Boolean))
+      .then(tweets => tweets
+        .map(getAltTextFromTweetMedia)
+        .map(getJSONLogs)
+        .filter(Boolean)
+        .reverse(),
+      )
   }
 
   async getTweets(n: ?number): Promise<TwitterGetStatusesResponse> {
@@ -98,28 +99,24 @@ class TwitterLogger {
       ? Math.min(n, this.maxPageSize)
       : this.maxPageSize
 
-    const processResponse = async response => {
-      if (!(response instanceof Array)) {
-        throw new Error('External API response is not Array.')
-      }
-      return response.length
+    const defaultOptions = {
+      screen_name: this.screenName,
+      trim_user: true,
+      exclude_replies: true,
+      include_ext_alt_text: true,
+      count,
+    }
+
+    const processResponse = async response =>
+      response.length !== 0
         ? ensureExternalApiResponseShape(['0', 'extended_entities'])(response)
         : response
-    }
 
     const getMoreTweets = async (currentTweets: TwitterGetStatusesResponse) => {
       const l = currentTweets.length
       const maxId = l
         ? currentTweets[l - 1].id_str
         : null
-
-      const defaultOptions = {
-        screen_name: this.screenName,
-        trim_user: true,
-        exclude_replies: true,
-        include_ext_alt_text: true,
-        count,
-      }
 
       const options = maxId
         ? {
@@ -145,11 +142,18 @@ class TwitterLogger {
     return getMoreTweets([])
   }
 
+  postStatusWithMedia({
+    media_id_string: mediaIdString,
   // $FlowFixMe: shape is enforced with helper function
-  uploadMedia(media: Buffer): Promise<TwitterUploadMediaResponse> {
+  }: TwitterUploadMediaResponse): Promise<TwitterPostStatusResponse> {
+    const tweet = {
+      media_ids: mediaIdString,
+      status: 'lol jk',
+      trim_user: true,
+    }
     return this.client
-      .post('media/upload', { media })
-      .then(ensureExternalApiResponseShape('media_id_string'))
+      .post('statuses/update', tweet)
+      .then(ensureExternalApiResponseShape('created_at'))
   }
 
   setAltTextOnMedia(
@@ -184,28 +188,11 @@ class TwitterLogger {
       )
   }
 
-  postStatusWithMedia({
-    media_id_string: mediaIdString,
   // $FlowFixMe: shape is enforced with helper function
-  }: TwitterUploadMediaResponse): Promise<TwitterPostStatusResponse> {
-    const tweet = {
-      media_ids: mediaIdString,
-      status: 'lol jk',
-      trim_user: true,
-    }
+  uploadMedia(media: Buffer): Promise<TwitterUploadMediaResponse> {
     return this.client
-      .post('statuses/update', tweet)
-      .then(ensureExternalApiResponseShape('created_at'))
-  }
-
-  async logAction(action: Action): Promise<string> {
-    const actionToLog = constructActionToLog(action)(await this.getMostRecentHash())
-    const actionString = JSON.stringify(actionToLog)
-
-    return this.uploadMedia(this.baseImage)
-      .then(this.setAltTextOnMedia.bind(this, actionString))
-      .then(this.postStatusWithMedia.bind(this))
-      .then(this.setMostRecentHash.bind(this, actionToLog.hash))
+      .post('media/upload', { media })
+      .then(ensureExternalApiResponseShape('media_id_string'))
   }
 }
 

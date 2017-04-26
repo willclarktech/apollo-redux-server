@@ -1,11 +1,12 @@
 // @flow
 import logger from '../logger'
 import type {
-  LogAggregator,
+  Action,
   Log,
+  LogAggregator,
 } from '../types/flow'
 
-const ensureHashConsistency = (aggregator: LogAggregator, log: Log): LogAggregator => {
+const ensureHashConsistency = (aggregator: LogAggregator, log: Log<any>): LogAggregator => {
   const { previousHash, validLogs } = aggregator
   const { hash, meta } = log
   return meta.previousHash === previousHash
@@ -26,7 +27,7 @@ const getInitialLogAggregator = (): LogAggregator => {
   }
 }
 
-export const getLoggedActions = () =>
+export const getLoggedActions = (): Promise<Array<Action>> =>
   logger
     .getLogs()
     .then(logs => process.env.ENSURE_HASH_CONSISTENCY
@@ -35,6 +36,9 @@ export const getLoggedActions = () =>
         .validLogs
       : logs,
     )
-    .then(logs => logs.map(log => log.action))
+    .then(logs => logs
+      .map(log => log.data)
+      .filter(Boolean),
+    )
 
 export const createTupleWithId = (v: any, i: number) => [(i + 1).toString(), v]

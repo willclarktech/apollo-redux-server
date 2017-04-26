@@ -84,7 +84,7 @@ const defineResolvers = (store: ReduxStore): Resolvers => {
         authenticate(ctx)(action)
 
         return logger
-          .logAction(action)
+          .log(action)
           .then(() => store.dispatch(action))
           .then(() => ({ success: true }))
           .catch(error => ctx.throw(error.status || 500, error.message))

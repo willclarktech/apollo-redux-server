@@ -59,7 +59,7 @@ const createAuthorIfNecessary = (store: ReduxStore) => async ({
       name,
     }
     return logger
-      .logAction(action)
+      .log(action)
       .then(() => store.dispatch(action))
   }
   return null

@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable immutable/no-mutation, immutable/no-this, class-methods-use-this */
+/* eslint-disable immutable/no-mutation, immutable/no-this */
 import crypto from 'crypto'
 import type {
   Log,
@@ -14,19 +14,25 @@ export type LoggerOptions = {
 class Logger<D> {
   genesisHash: string
   mostRecentHash: ?string
+  getHashForLog: (log: LogWithoutHash<D>) => string
 
   constructor({
     genesisHash,
   }: LoggerOptions) {
     this.genesisHash = genesisHash
+    this.getHashForLog = log =>
+      crypto
+        .createHash('sha256')
+        .update(JSON.stringify(log), 'utf8')
+        .digest('hex')
   }
 
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars, class-methods-use-this
   async store(logString: string): Promise<boolean> {
     throw new Error('`store` method on Logger class should be overwritten by children.')
   }
 
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars, class-methods-use-this
   async getLogs(n: ?number): Promise<Array<Log<D>>> {
     throw new Error('`getLogs` method on Logger class should be overwritten by children.')
   }
@@ -45,13 +51,6 @@ class Logger<D> {
       ...logWithoutHash,
       hash,
     }
-  }
-
-  getHashForLog(log: LogWithoutHash<D>): string {
-    return crypto
-      .createHash('sha256')
-      .update(JSON.stringify(log), 'utf8')
-      .digest('hex')
   }
 
   getLoggedData(ensureHashConsistency: ?boolean): Promise<Array<D>> {

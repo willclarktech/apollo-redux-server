@@ -18,13 +18,9 @@ import type {
   ID,
   PostWithID,
   ReduxStore,
+  Resolvers,
   SecretWithID,
 } from '../types/flow'
-
-type Resolvers = {
-  Query: {},
-  Mutation: {},
-}
 
 const defineResolvers = (store: ReduxStore): Resolvers => {
   const getAuthorById = (id: ID): AuthorWithID => {

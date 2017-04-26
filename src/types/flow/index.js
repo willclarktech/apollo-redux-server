@@ -2,6 +2,7 @@
 export type {
   DispatchParams,
   DispatchResult,
+  Resolvers,
 } from './apollo.types'
 
 export type {

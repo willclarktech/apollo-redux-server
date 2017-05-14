@@ -1,4 +1,4 @@
- type Author {
+type Author {
   id: ID!
   name: String
   posts: [Post]
@@ -11,7 +11,7 @@ type Post {
   votes: Int
 }
 
- type Secret {
+type Secret {
   id: ID!
   author: Author!
   content: String!

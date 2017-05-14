@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "./bin/postinstall.sh",
     "start": "nodemon src/index.js --watch src --exec babel-node",
+    "elasticsearch": "docker-compose up elk",
     "filebeat": "./filebeat/filebeat -c filebeat.yml -e",
     "lint": "eslint src",
     "lint:fix": "npm run lint --fix",

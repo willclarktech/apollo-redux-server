@@ -6,8 +6,8 @@ import authenticate from './authenticator'
 import {
   convertMapToArray,
   convertMapToArrayWithFilter,
-  convertMapToObjectWithId,
   doesAuthorIdMatchUserId,
+  getAuthorFromStoreById,
 } from './helpers'
 
 import type {
@@ -15,7 +15,6 @@ import type {
   Context,
   DispatchParams,
   DispatchResult,
-  ID,
   PostWithID,
   ReduxStore,
   Resolvers,
@@ -23,16 +22,7 @@ import type {
 } from '../types/flow'
 
 const defineResolvers = (store: ReduxStore): Resolvers => {
-  const getAuthorById = (id: ID): AuthorWithID => {
-    const { authors } = store.getState()
-    const author = authors.get(id)
-
-    if (!author) {
-      throw new Error(`Couldn’t find author with id ${id}.`)
-    }
-
-    return convertMapToObjectWithId([id, author])
-  }
+  const getAuthorById = getAuthorFromStoreById(store)
   return {
     Query: {
       posts(): Array<PostWithID> {

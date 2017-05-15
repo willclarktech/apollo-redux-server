@@ -1,9 +1,11 @@
 // @flow
 import type {
+  AuthorWithID,
   Converter,
   ConverterWithFilter,
   DomainObject,
   ID,
+  ReduxStore,
 } from '../types/flow'
 
 export const convertMapToObjectWithId = ([id, value]: [ID, DomainObject]) => ({
@@ -23,3 +25,14 @@ export const convertMapToArrayWithFilter: ConverterWithFilter = filter => map =>
 export const doesAuthorIdMatchUserId = (userId: ID) =>
   ([/* id */, { authorId }]: [any, { authorId: ID }]): boolean =>
   userId === authorId
+
+export const getAuthorFromStoreById = (store: ReduxStore) => (id: ID): AuthorWithID => {
+  const { authors } = store.getState()
+  const author = authors.get(id)
+
+  if (!author) {
+    throw new Error(`Couldn’t find author with id ${id}.`)
+  }
+
+  return convertMapToObjectWithId([id, author])
+}

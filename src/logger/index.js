@@ -62,7 +62,7 @@ const createLogger = () => {
     case 'local':
       return createLocalFileLogger()
     default:
-      throw new Error('LOGGER not set in environment. Must be `twitter` or `file`.')
+      throw new Error('LOGGER not set in environment. Must be `twitter` or `local`.')
   }
 }
 

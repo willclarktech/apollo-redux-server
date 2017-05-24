@@ -5,6 +5,7 @@ import {
 } from 'blockchain-logger'
 
 const {
+  BITCOIN_PRIVATE_KEY,
   GENESIS_HASH,
   TWITTER_ACCESS_TOKEN_KEY,
   TWITTER_ACCESS_TOKEN_SECRET,
@@ -18,8 +19,24 @@ if (!GENESIS_HASH) {
   throw new Error('GENESIS_HASH not set in environment.')
 }
 
-const createLocalFileLogger = () => new LocalFileLogger({
+const basicOptions = {
   genesisHash: GENESIS_HASH,
+}
+
+const defaultOptions = BITCOIN_PRIVATE_KEY
+  ? {
+    ...basicOptions,
+    blockchainOptions: {
+      maxFee: 5000,
+      prefix: 'ARS',
+      privateKey: BITCOIN_PRIVATE_KEY,
+      testnet: BITCOIN_PRIVATE_KEY !== '1',
+    },
+  }
+  : basicOptions
+
+const createLocalFileLogger = () => new LocalFileLogger({
+  ...defaultOptions,
   logPath: './logs/',
   logFilePrefix: 'actions',
 })
@@ -45,12 +62,12 @@ const createTwitterLogger = () => {
   }
 
   return new TwitterLogger({
+    ...defaultOptions,
     accessTokenKey: TWITTER_ACCESS_TOKEN_KEY,
     accessTokenSecret: TWITTER_ACCESS_TOKEN_SECRET,
     baseImageLocation: TWITTER_BASE_IMAGE_LOCATION,
     consumerKey: TWITTER_CONSUMER_KEY,
     consumerSecret: TWITTER_CONSUMER_SECRET,
-    genesisHash: GENESIS_HASH,
     screenName: TWITTER_SCREEN_NAME,
   })
 }

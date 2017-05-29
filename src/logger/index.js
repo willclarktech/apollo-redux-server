@@ -6,6 +6,7 @@ import {
 
 const {
   BITCOIN_PRIVATE_KEY,
+  BLOCKCHAIN_PREFIX,
   GENESIS_HASH,
   TWITTER_ACCESS_TOKEN_KEY,
   TWITTER_ACCESS_TOKEN_SECRET,
@@ -28,7 +29,7 @@ const defaultOptions = BITCOIN_PRIVATE_KEY
     ...basicOptions,
     blockchainOptions: {
       maxFee: 5000,
-      prefix: 'ARS',
+      prefix: BLOCKCHAIN_PREFIX,
       privateKey: BITCOIN_PRIVATE_KEY,
       testnet: BITCOIN_PRIVATE_KEY !== '1',
     },

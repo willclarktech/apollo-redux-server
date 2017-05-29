@@ -120,7 +120,9 @@ This proof-of-concept app uses [blockchain-logger](https://github.com/willclarkt
 1. a local file logger, which just stores logs in text files according to date
 1. a twitter logger, which stores logs in uploaded media metadata
 
-You could just as well use a table in a SQL database or a blockchain (e.g. use Bitcoin’s). Running `yarn filebeat` or `npm run filebeat` will forward the logs from the file-based logger to an expected logstash service running on `localhost:5044` for storage in elasticsearch and display using kibana. As you can see in the `docker-compose.yml` file, I’ve used [Sébastien Pujadas’s excellent docker image](https://elk-docker.readthedocs.io/) to get that up and running.
+and either one can ensure integrity by storing hashes on the Bitcoin blockchain (or the testnet) if you set the `BITCOIN_PRIVATE_KEY` environmental variable.
+
+Running `yarn filebeat` or `npm run filebeat` will forward the logs from the file-based logger to an expected logstash service running on `localhost:5044` for storage in elasticsearch and display using kibana. As you can see in the `docker-compose.yml` file, I’ve used [Sébastien Pujadas’s excellent docker image](https://elk-docker.readthedocs.io/) to get that up and running.
 
 ## What’s up with all these higher-order functions?
 
